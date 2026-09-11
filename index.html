@@ -251,6 +251,11 @@
   /* ---------- tables ---------- */
 
   .t-scroll { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
+  .swipe {
+    display: none; font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 6px;
+  }
   table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
   caption { text-align: left; padding: 14px 16px 0; color: var(--muted); font-size: 12.5px; }
   th, td { padding: 9px 14px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--rule-soft); }
@@ -270,6 +275,7 @@
   .meter { display: block; height: 5px; border-radius: 2px; background: var(--s1); min-width: 2px; }
   .meter-cell { width: 110px; }
   .meter-track { background: var(--surface-sunk); border-radius: 2px; height: 5px; width: 100%; }
+  .pct { color: var(--muted); font-size: 11px; }
   .tag {
     display: inline-block; font-family: "IBM Plex Mono", monospace; font-size: 10px;
     letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 6px; border-radius: 3px;
@@ -288,11 +294,30 @@
     .kpis { grid-template-columns: 1fr 1fr; }
     .phase-pair { grid-template-columns: 1fr; }
     .tab { padding: 9px 11px; font-size: 14px; }
+
+    /* Keep the row label in view while the numbers scroll under it. */
+    .t-scroll { position: relative; }
+    table { font-size: 12.5px; }
+    th, td { padding: 8px 10px; }
+    th:first-child, td:first-child {
+      position: sticky; left: 0; z-index: 2;
+      min-width: 124px; max-width: 148px;
+      background: var(--surface);
+      box-shadow: 1px 0 0 var(--rule);
+    }
+    tfoot td:first-child { background: var(--surface-sunk); }
+    .swipe { display: block; }
+    .meter-cell { width: 78px; }
+    .pct { display: none; }
   }
   @media (max-width: 430px) {
-    .kpis { grid-template-columns: 1fr; }
-    th:first-child, td:first-child { min-width: 150px; }
+    .wrap { padding-inline: 16px; }
+    .chart-block { padding: 16px 12px 12px; }
     .tab { flex-direction: column; gap: 1px; }
+    h1 { font-size: 27px; }
+  }
+  @media (max-width: 360px) {
+    .kpis { grid-template-columns: 1fr; }
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -348,7 +373,7 @@
         </div>
 
         <div class="panel">
-          <div class="panel-title"><span>Cost per call</span><em>&#8377; per call, both accounts</em></div>
+          <div class="panel-title"><span>Cost per call</span><em id="cpc-unit">&#8377; per call, both accounts</em></div>
           <svg id="svg-cpc" role="img" aria-label="Daily cost per phone call against the period average"></svg>
         </div>
 
@@ -386,6 +411,7 @@
           the clinic number each ad dials &mdash; 7788, 8585, 7272 &mdash; so the table doubles as a read on which line
           rang.</p>
       </div>
+      <p class="swipe">&larr; swipe the table for the rest &rarr;</p>
       <div class="t-scroll">
         <table>
           <thead>
@@ -407,6 +433,7 @@
         <h2 id="web-title"></h2>
         <p class="prose" id="web-intro"></p>
       </div>
+      <p class="swipe">&larr; swipe the table for the rest &rarr;</p>
       <div class="t-scroll">
         <table>
           <thead>
@@ -427,6 +454,7 @@
         <h2>Calls by age band</h2>
         <p class="prose" id="age-intro"></p>
       </div>
+      <p class="swipe">&larr; swipe the table for the rest &rarr;</p>
       <div class="t-scroll">
         <table>
           <thead>
@@ -448,6 +476,7 @@
         <p class="prose">The numbers behind the charts. <em>Calls</em> is Meta&rsquo;s <em>Phone calls placed</em>;
           <em>&#8377;/call</em> divides that day&rsquo;s call-ad spend only, so the website-lead column never inflates it.</p>
       </div>
+      <p class="swipe">&larr; swipe the table for the rest &rarr;</p>
       <div class="t-scroll">
         <table>
           <caption>Reach is the sum of each day&rsquo;s reach and counts a person once per day they were served.</caption>
@@ -687,7 +716,10 @@ function capPath(x,y,w,h,r){
          "L"+(x+w-r)+" "+y+"A"+r+" "+r+" 0 0 1 "+(x+w)+" "+(y+r)+"L"+(x+w)+" "+(y+h)+"Z";
 }
 
-const GAP=2, PAD_L=54, PAD_R=10, PAD_T=8, PAD_B=20;
+const GAP=2, PAD_R=10, PAD_T=8, PAD_B=20;
+let PAD_L=54;              /* narrows on a phone so the plot keeps its width */
+let narrow=false;
+const kInr=n=>n>=1000?(n/1000).toFixed(n%1000?1:0)+"k":inr(n);
 let M=MONTHS.aug;          /* active month */
 let panels=[];
 const tip=document.getElementById("tip");
@@ -723,12 +755,11 @@ function drawPanel(svg,opts){
   opts.draw(svg,{y,cx,step,bw,plotH,W,H});
 
   if(opts.xLabels){
-    const every=step<17?(step<11?5:3):1;
+    const every=step<13?(step<9?5:3):1;
     D.forEach((r,i)=>{
-      const d=r[0];
-      if(d!==1&&d!==D.length&&(d%every!==0)) return;
+      if((r[0]-1)%every!==0) return;      /* stepping from day 1 keeps the last tick clear */
       const t=el("text",{class:"ax-label",x:cx(i),y:H-6,"text-anchor":"middle"});
-      t.textContent=d;
+      t.textContent=r[0];
       svg.appendChild(t);
     });
   }
@@ -754,15 +785,16 @@ function stack(svg,g,segs,i){
 function buildCharts(){
   const D=M.daily;
   const block=document.querySelector(".chart-block");
-  const W=Math.max(300,block.clientWidth-36);
-  const narrow=W<520;
+  const W=Math.max(280,block.clientWidth-(block.clientWidth<430?26:36));
+  narrow=W<520;
+  PAD_L=narrow?38:54;
   panels=[];
 
   const spendMax=niceMax(Math.max(...D.map(r=>r[1]+r[3]+r[5])));
   panels.push(drawPanel(document.getElementById("svg-spend"),{
     width:W,height:narrow?170:210,max:spendMax,
     ticks:[0,spendMax/4,spendMax/2,spendMax*3/4,spendMax],
-    fmtTick:t=>t===0?"0":RS+inr(t),
+    fmtTick:t=>t===0?"0":RS+(narrow?kInr(t):inr(t)),
     xLabels:false,
     draw(svg,g){ D.forEach((r,i)=>stack(svg,g,[[r[1],"var(--s1)"],[r[3],"var(--s3)"],[r[5],"var(--s2)"]],i)); }
   }));
@@ -786,9 +818,15 @@ function buildCharts(){
     draw(svg,g){
       const ya=g.y(M.cpc);
       svg.appendChild(el("line",{class:"ref-line",x1:PAD_L,x2:g.W-PAD_R,y1:ya,y2:ya}));
-      const rt=el("text",{class:"ref-text",x:PAD_L+6,y:ya-7,"text-anchor":"start"});
-      rt.textContent=(M.id==="aug"?"month":"period")+" average "+RS+inr2(M.cpc);
-      svg.appendChild(rt);
+      const unit=document.getElementById("cpc-unit");
+      if(narrow){
+        unit.innerHTML=RS+" per call &middot; avg "+RS+inr2(M.cpc);
+      }else{
+        unit.innerHTML=RS+" per call, both accounts";
+        const rt=el("text",{class:"ref-text",x:PAD_L+6,y:ya-7,"text-anchor":"start"});
+        rt.textContent=(M.id==="aug"?"month":"period")+" average "+RS+inr2(M.cpc);
+        svg.appendChild(rt);
+      }
 
       let d="";
       cpc.forEach((v,i)=>{ if(v===null) return; d+=(d?"L":"M")+g.cx(i)+" "+g.y(v); });
@@ -883,7 +921,7 @@ function renderTables(){
   document.getElementById("camp-calls").innerHTML=M.campCalls.map(c=>{
     const v=c[4]?c[3]/c[4]:null;
     const cls=v===best?"best":(v===worst?"worstv":"");
-    const pc=n=>"<span style='color:var(--muted);font-size:11px'> "+(n/c[4]*100).toFixed(0)+"%</span>";
+    const pc=n=>"<span class='pct'> "+(n/c[4]*100).toFixed(0)+"%</span>";
     return "<tr><td><span class='cname'>"+dot(c[1])+"<span>"+c[0]+"</span></span></td>"+
       "<td class='num'>"+c[2]+" "+M.short+"</td><td class='num'>"+RS+inr(c[3])+"</td>"+
       "<td class='num'>"+inr(c[4])+"</td><td class='num "+cls+"'>"+(v?RS+inr2(v):"&mdash;")+"</td>"+

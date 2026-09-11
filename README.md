@@ -162,6 +162,28 @@ Pull with Meta MCP `ads_get_ad_entities`, `level: "campaign"`,
   `[name, account(1|2), daysLive, spend, callsPlaced, calls20s, calls60s]`. The
   account flag drives the colour dot — keep it correct when adding rows, and keep
   each month's `calls20` / `calls60` totals equal to the sum of its rows.
+## Mobile
+
+The page is built to work at 320–430px, and there are a few rules to keep:
+
+- **Tables pin their first column.** Under 760px the campaign/day name is
+  `position: sticky; left: 0` inside the `.t-scroll` container, so it stays put
+  while the numbers swipe under it. A `.swipe` hint sits above each table.
+- **Inline percentages hide under 760px** (`.pct`). Without that, a numeric
+  column ends up permanently parked under the pinned name column and its leading
+  digits get cut — it reads like a data bug.
+- **Charts narrow their own gutter.** `PAD_L` drops 54 → 38 and spend ticks
+  switch to `₹20k` form when the plot is under 520px, or the y-axis labels eat
+  the plot.
+- **Day labels step from day 1** (`(day-1) % every === 0`), never "first + last +
+  every Nth" — that older rule printed 30 and 31 on top of each other.
+- The cost-per-call average moves from a label over the line into the panel
+  title (`#cpc-unit`) when narrow.
+- KPI tiles are 2-up down to 360px, 1-up below.
+
+Verify changes at phone width by loading the page in a 390px-wide `<iframe>` —
+resizing the browser window does not reliably change the viewport for testing.
+
 - The file is deliberately **pure ASCII**: the rupee sign is `&#8377;` in markup
   and `\u20B9` in script (via the `RS` constant), dashes are entities/escapes. It
   renders correctly even when served without a charset header. Keep it that way.
