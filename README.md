@@ -27,6 +27,8 @@ spend that is not real.
   account, and cost per call against that period's average. One hover reads all three.
 - A two-up comparison card carrying each tab's headline finding (August's
   1–9 vs 10–31 split; September against the August average).
+- A **call-quality funnel**: placed → 20s+ → 60s+, with each step's share of
+  placed calls and its true cost.
 - Per-campaign totals for the call campaigns and, separately, the website-lead
   campaigns.
 - Calls and cost per call by age band, both accounts combined.
@@ -41,11 +43,15 @@ Frozen **11 Sep 2026**.
 | Spent | ₹3,62,046.60 | ₹1,06,504.23 |
 | Calls placed | 5,144 | 1,450 |
 | Cost per call | **₹59.99** | **₹70.61** |
+| Lasted 20s+ | 1,448 (28.1%) · ₹213.12 | 437 (30.1%) · ₹234.28 |
+| Lasted 60s+ | 608 (11.8%) · ₹507.57 | 205 (14.1%) · **₹499.42** |
 | Pallavi Halcyon | ₹2,18,901.90 / 3,063 / ₹54.02 | ₹41,188.49 / 604 / ₹61.37 |
 | Pallavi Kiran | ₹1,43,144.70 / 2,081 / ₹68.79 | ₹65,315.74 / 846 / ₹77.21 |
 
 September is tracking August's *second half* (₹72.36), not its first nine days
-(₹44.82).
+(₹44.82) — **but** a higher share of September's calls connect, so a 60-second
+call is actually *cheaper* than in August despite each tap costing 18% more.
+That is the one metric on which September is ahead.
 
 All figures are **ex-GST** (Meta bills 18% GST on top in India). Unlike
 `o2-reports`, this page does not show a GST-inclusive billed total — if the
@@ -68,6 +74,32 @@ budget is back on the phone. `ad set level 3 camp` is the standout at **₹46.49
 across 413 calls on only ~₹1,920/day — the one line beating August's average.
 The drag is the Pallavi Kiran account: 61% more spend than Pallavi Halcyon at
 ₹77.21 vs ₹61.37 a call, with `New Leads Campaign` weakest at ₹89.65.
+
+## 20s and 60s calls are derived, not reported
+
+There is **no count field** for call duration. Meta returns only an average cost
+per connect, so each figure is:
+
+    calls20s = spend / cost_per_action_type:click_to_call_native_20s_call_connect
+    calls60s = spend / cost_per_action_type:click_to_call_native_60s_call_connect
+
+**Every division must land on a whole number** — that is the check that the
+derivation is sound. Assert it; if one does not, something is wrong. (Confirmed
+for all 13 campaign-periods in the current data.) Same method as `o2-reports`.
+
+A day with spend but no `click_to_call_native_60s_*` key genuinely had zero
+60-second calls — record 0, do not treat the missing key as an error.
+
+These are derived **per campaign per period**, which is why they appear in the
+funnel and the campaign table but not in the day table. Daily duration figures
+are possible but need one `cost_per_action_type` pull per account per month with
+`time_increment` — large responses, so expect them to spill to a file.
+
+Watch the quality/price trade: `Halcyon | Calls — Age 35+ | FB only | CBO` has
+by far the cheapest placed calls (₹19.60) **and** the cheapest 20s calls
+(₹91.32), but the worst 60s rate of any campaign (3.4%) — its calls skew short,
+so the headline number flatters it. In September, `7788- call ads-new` is the
+one to watch: 71 calls, only 3 past 60 seconds, at ₹2,600 each.
 
 ## Two result types — do not merge them
 
@@ -126,8 +158,10 @@ Pull with Meta MCP `ads_get_ad_entities`, `level: "campaign"`,
   *without* `time_increment` and are quoted in the footer only.
 - Recent days keep settling for ~48h; re-pull the whole month rather than
   appending.
-- `CAMP_CALLS` carries an account flag (`1` or `2`) that drives the colour dot —
-  keep it correct when adding rows.
+- `campCalls` rows are
+  `[name, account(1|2), daysLive, spend, callsPlaced, calls20s, calls60s]`. The
+  account flag drives the colour dot — keep it correct when adding rows, and keep
+  each month's `calls20` / `calls60` totals equal to the sum of its rows.
 - The file is deliberately **pure ASCII**: the rupee sign is `&#8377;` in markup
   and `\u20B9` in script (via the `RS` constant), dashes are entities/escapes. It
   renders correctly even when served without a charset header. Keep it that way.

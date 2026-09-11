@@ -22,6 +22,9 @@
     --crit:         #d03b3b;
     --good-ink:     #006300;
     --crit-ink:     #b02a2a;
+    --f1:           #86b6ef;
+    --f2:           #3987e5;
+    --f3:           #1c5cab;
     --shadow:       0 1px 2px rgba(15,20,25,0.05);
   }
   @media (prefers-color-scheme: dark) {
@@ -44,6 +47,9 @@
       --crit:         #d03b3b;
       --good-ink:     #0ca30c;
       --crit-ink:     #e36b6b;
+      --f1:           #9ec5f4;
+      --f2:           #5598e7;
+      --f3:           #256abf;
       --shadow:       0 1px 2px rgba(0,0,0,0.4);
     }
   }
@@ -66,6 +72,9 @@
     --crit:         #d03b3b;
     --good-ink:     #0ca30c;
     --crit-ink:     #e36b6b;
+    --f1:           #9ec5f4;
+    --f2:           #5598e7;
+    --f3:           #256abf;
     --shadow:       0 1px 2px rgba(0,0,0,0.4);
   }
 
@@ -215,6 +224,30 @@
   .phase .p-big small { font-size: .55em; font-weight: 600; color: var(--ink-2); }
   .phase .p-det { font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 
+  /* ---------- duration funnel ---------- */
+
+  .funnel {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 6px;
+    box-shadow: var(--shadow); padding: 20px 20px 18px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .f-row { display: grid; grid-template-columns: 132px minmax(0,1fr) auto; gap: 14px; align-items: center; }
+  .f-head { display: flex; flex-direction: column; gap: 1px; }
+  .f-head .f-name { font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 7px; }
+  .f-head .f-sub { font-size: 11.5px; color: var(--muted); font-family: "IBM Plex Mono", monospace; }
+  .f-track { min-width: 0; }
+  .f-bar { display: block; height: 26px; border-radius: 0 4px 4px 0; min-width: 3px; }
+  .f-val { display: flex; align-items: baseline; gap: 8px; white-space: nowrap; }
+  .f-val b { font-family: Archivo, sans-serif; font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+  .f-val span { font-family: "IBM Plex Mono", monospace; font-size: 11.5px; color: var(--muted); }
+  .f-note { font-size: 13px; color: var(--ink-2); border-top: 1px solid var(--rule-soft); padding-top: 14px; max-width: 68ch; }
+  .f-note strong { color: var(--ink); font-weight: 600; }
+
+  @media (max-width: 620px) {
+    .f-row { grid-template-columns: 1fr; gap: 5px; }
+    .f-val { margin-top: 2px; }
+  }
+
   /* ---------- tables ---------- */
 
   .t-scroll { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
@@ -336,6 +369,17 @@
 
     <section>
       <div class="section-head">
+        <p class="eyebrow">Call quality</p>
+        <h2>How many of those calls actually connected</h2>
+        <p class="prose">A tap on the ad opens the dialler; it does not mean anyone spoke. Meta also reports how many
+          of those calls stayed connected past <strong>20 seconds</strong> and past <strong>60 seconds</strong> &mdash;
+          the closest available proxy for a real conversation with the clinic.</p>
+      </div>
+      <div class="funnel" id="funnel"></div>
+    </section>
+
+    <section>
+      <div class="section-head">
         <p class="eyebrow">Call campaigns</p>
         <h2>Where the calls came from</h2>
         <p class="prose">Every campaign whose result Meta reports as <em>Phone calls placed</em>. Campaign names carry
@@ -348,6 +392,7 @@
             <tr>
               <th scope="col">Campaign</th><th scope="col">Days live</th><th scope="col">Spent</th>
               <th scope="col">Calls</th><th scope="col">&#8377; / call</th>
+              <th scope="col">20s+</th><th scope="col">60s+</th><th scope="col">&#8377; / 20s call</th>
             </tr>
           </thead>
           <tbody id="camp-calls"></tbody>
@@ -431,6 +476,11 @@
         that opened the dialler, not conversations answered at the clinic, so the clinic&rsquo;s own log will read lower.</li>
       <li><b>Cost per call</b> divides only the spend of campaigns optimising for calls. Blending in the website-lead
         budget would overstate what a call costs.</li>
+      <li><b>20s+ and 60s+ are derived, not reported.</b> Meta exposes no count for them &mdash; only an average cost
+        per connect &mdash; so each figure is that campaign's spend divided by its
+        <span class="num">click_to_call_native_20s_call_connect</span> (or <span class="num">60s</span>) cost. Every
+        division lands exactly on a whole number, which is the check that the derivation is sound. They are derived per
+        campaign per period, so they appear in the funnel and the campaign table but not in the day table.</li>
       <li><b>September stops at the 10th.</b> Meta keeps revising the most recent ~48 hours, so 11 September is a live
         part-day and is excluded rather than shown as a collapse in spend. It will settle into the next refresh.</li>
       <li><b>Reach</b> in the day tables is summed per day and double-counts people across days; the de-duplicated
@@ -494,7 +544,10 @@ const DAILY_SEP=[
 [10,3844.36,72,0,0,7018.69,93,150765,120253,448]
 ];
 
-/* campaign rows: [name, account(1|2), daysLive, spend, calls] */
+/* campaign rows: [name, account(1|2), daysLive, spend, callsPlaced, calls20s, calls60s].
+   20s/60s are not queryable fields \u2014 they are derived as
+   spend / cost_per_action_type:click_to_call_native_{20s,60s}_call_connect,
+   and every division lands on a whole number (asserted at build time). */
 const MONTHS={
   aug:{
     id:"aug", label:"August 2026", short:"Aug", range:"1&ndash;31 Aug 2026", days:31,
@@ -521,14 +574,21 @@ const MONTHS={
       "to 129, while the clinic's cost to earn one ring went from &#8377;44.82 to &#8377;72.36.</p>"+
       "<p class='prose'>The website-lead spend is not wasted &mdash; it bought 332 site enquiries &mdash; but it buys a "+
       "different thing at a different price, and it is the reason the call line falls away in the middle panel above.</p>",
+    calls20:1448, calls60:608,
+    funnelNote:
+      "Just over a quarter of the taps stayed on the line past 20 seconds. That reframes the month's cheapest "+
+      "campaign: <strong>Halcyon | Calls &mdash; Age 35+ | FB only | CBO</strong> still wins on connected calls at "+
+      "<strong>&#8377;91.32 per 20-second call</strong> &mdash; nearly half the next best &mdash; but only 3.4% of its "+
+      "calls reached 60 seconds, the weakest rate of any campaign, so its &#8377;19.60 headline flatters it. "+
+      "<strong>new 3 ads 8585</strong> has the healthiest mix: 32.9% past 20 seconds and 15.9% past 60.",
     campCalls:[
-      ["ad set level 3 camp",1,"1&ndash;31",72430.91,1258],
-      ["Kiran | Calls &mdash; 3 Numbers | ABO",2,"1&ndash;31",139362.34,2029],
-      ["Halcyon | Calls &mdash; Core | CBO",1,"1&ndash;31",31589.75,384],
-      ["Shoulder pain | video + images 7272 - Copy",1,"1&ndash;29",28528.78,665],
-      ["new 3 ads 8585",1,"1&ndash;31",24872.56,346],
-      ["Halcyon | Calls &mdash; Age 35+ | FB only | CBO",1,"1&ndash;8",8036.12,410],
-      ["New Leads Campaign",2,"29&ndash;31",3782.36,52]
+      ["ad set level 3 camp",1,"1&ndash;31",72430.91,1258,306,130],
+      ["Kiran | Calls &mdash; 3 Numbers | ABO",2,"1&ndash;31",139362.34,2029,686,304],
+      ["Halcyon | Calls &mdash; Core | CBO",1,"1&ndash;31",31589.75,384,74,35],
+      ["Shoulder pain | video + images 7272 - Copy",1,"1&ndash;29",28528.78,665,167,62],
+      ["new 3 ads 8585",1,"1&ndash;31",24872.56,346,114,55],
+      ["Halcyon | Calls &mdash; Age 35+ | FB only | CBO",1,"1&ndash;8",8036.12,410,88,14],
+      ["New Leads Campaign",2,"29&ndash;31",3782.36,52,13,8]
     ],
     webTitle:"The other &#8377;53,444",
     webIntro:"These five ran on the Pallavi Halcyon account from 10 August and sent people to a landing page instead of "+
@@ -577,13 +637,21 @@ const MONTHS={
       "<p class='prose'>The drag is on the Pallavi Kiran account, which is spending 61% more than Pallavi Halcyon "+
       "(&#8377;65,316 against &#8377;41,188) at &#8377;77.21 a call versus &#8377;61.37 &mdash; and inside it, "+
       "<strong>New Leads Campaign</strong> is the weakest line at &#8377;89.65.</p>",
+    calls20:437, calls60:205,
+    funnelNote:
+      "This is September's one clear win. A higher share of calls is connecting than in August &mdash; "+
+      "<strong>30.1% past 20 seconds against 28.1%</strong>, and 14.1% past 60 against 11.8% &mdash; and because the "+
+      "mix improved, a 60-second call is actually <strong>cheaper than in August (&#8377;499.42 against "+
+      "&#8377;507.57)</strong> even though each tap costs 18% more. On the metric closest to a real conversation, "+
+      "September is not behind. <strong>7788- call ads-new</strong> is the exception and should be watched: 71 calls "+
+      "but only 3 reached 60 seconds, at &#8377;2,600 each.",
     campCalls:[
-      ["Kiran | Calls &mdash; 3 Numbers | ABO",2,"1&ndash;10",42544.94,592],
-      ["New Leads Campaign",2,"1&ndash;10",22770.80,254],
-      ["ad set level 3 camp",1,"1&ndash;10",19201.48,413],
-      ["7788- call ads-new",1,"3&ndash;10",7801.63,71],
-      ["new 3 ads 8585",1,"1&ndash;10",7633.85,97],
-      ["Halcyon | Calls &mdash; Core | CBO",1,"1&ndash;3",2428.18,23]
+      ["Kiran | Calls &mdash; 3 Numbers | ABO",2,"1&ndash;10",42544.94,592,199,101],
+      ["New Leads Campaign",2,"1&ndash;10",22770.80,254,83,50],
+      ["ad set level 3 camp",1,"1&ndash;10",19201.48,413,98,31],
+      ["7788- call ads-new",1,"3&ndash;10",7801.63,71,16,3],
+      ["new 3 ads 8585",1,"1&ndash;10",7633.85,97,35,16],
+      ["Halcyon | Calls &mdash; Core | CBO",1,"1&ndash;3",2428.18,23,6,4]
     ],
     webTitle:"Website leads, wound down",
     webIntro:"Only one campaign spent, and only until the 3rd. The second row carries four conversions Meta attributed "+
@@ -815,13 +883,18 @@ function renderTables(){
   document.getElementById("camp-calls").innerHTML=M.campCalls.map(c=>{
     const v=c[4]?c[3]/c[4]:null;
     const cls=v===best?"best":(v===worst?"worstv":"");
+    const pc=n=>"<span style='color:var(--muted);font-size:11px'> "+(n/c[4]*100).toFixed(0)+"%</span>";
     return "<tr><td><span class='cname'>"+dot(c[1])+"<span>"+c[0]+"</span></span></td>"+
       "<td class='num'>"+c[2]+" "+M.short+"</td><td class='num'>"+RS+inr(c[3])+"</td>"+
-      "<td class='num'>"+inr(c[4])+"</td><td class='num "+cls+"'>"+(v?RS+inr2(v):"&mdash;")+"</td></tr>";
+      "<td class='num'>"+inr(c[4])+"</td><td class='num "+cls+"'>"+(v?RS+inr2(v):"&mdash;")+"</td>"+
+      "<td class='num'>"+c[5]+pc(c[5])+"</td><td class='num'>"+c[6]+pc(c[6])+"</td>"+
+      "<td class='num'>"+(c[5]?RS+inr2(c[3]/c[5]):"&mdash;")+"</td></tr>";
   }).join("");
   document.getElementById("camp-calls-foot").innerHTML=
     "<tr><td>All call campaigns</td><td class='num'>&mdash;</td><td class='num'>"+RS+inr(M.callSpend)+
-    "</td><td class='num'>"+inr(M.calls)+"</td><td class='num'>"+RS+inr2(M.cpc)+"</td></tr>";
+    "</td><td class='num'>"+inr(M.calls)+"</td><td class='num'>"+RS+inr2(M.cpc)+"</td>"+
+    "<td class='num'>"+inr(M.calls20)+"</td><td class='num'>"+inr(M.calls60)+"</td>"+
+    "<td class='num'>"+RS+inr2(M.callSpend/M.calls20)+"</td></tr>";
 
   document.getElementById("web-title").innerHTML=M.webTitle;
   document.getElementById("web-intro").innerHTML=M.webIntro;
@@ -871,6 +944,23 @@ function renderTables(){
     "<td class='num'>"+inr(T[6])+"</td><td class='num'>"+inr(T[7])+"</td></tr>";
 }
 
+function renderFunnel(){
+  const steps=[
+    ["Calls placed","tapped the dialler",M.calls,"var(--f1)"],
+    ["Lasted 20s+","stayed on the line",M.calls20,"var(--f2)"],
+    ["Lasted 60s+","a real conversation",M.calls60,"var(--f3)"]
+  ];
+  document.getElementById("funnel").innerHTML=steps.map(st=>{
+    const pct=st[2]/M.calls*100;
+    return '<div class="f-row">'+
+      '<div class="f-head"><span class="f-name">'+st[0]+'</span>'+
+      '<span class="f-sub">'+st[1]+"</span></div>"+
+      '<div class="f-track"><span class="f-bar" style="width:'+pct.toFixed(1)+'%;background:'+st[3]+'"></span></div>'+
+      '<span class="f-val"><b>'+inr(st[2])+"</b><span>"+pct.toFixed(1)+"% of placed &middot; "+
+      RS+inr2(M.callSpend/st[2])+" each</span></span></div>";
+  }).join("")+'<p class="f-note">'+M.funnelNote+"</p>";
+}
+
 function renderNarrative(){
   document.getElementById("part-note").innerHTML=
     M.partNote?'<span class="tag">Note</span><span>'+M.partNote+"</span>":"";
@@ -890,6 +980,7 @@ function renderNarrative(){
 function render(){
   renderNarrative();
   renderKpis();
+  renderFunnel();
   renderTables();
   buildCharts();
   showTip(-1);
