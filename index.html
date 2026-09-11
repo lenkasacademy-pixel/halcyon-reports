@@ -1,0 +1,926 @@
+<title>Halcyon Call Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --plane:        #f2f5f7;
+    --surface:      #fdfdfe;
+    --surface-sunk: #eef2f5;
+    --ink:          #0f1419;
+    --ink-2:        #4a5560;
+    --muted:        #7e8a95;
+    --rule:         #dfe5ea;
+    --rule-soft:    #ebeff2;
+    --baseline:     #c3ccd3;
+    --s1:           #2a78d6;
+    --s1-wash:      rgba(42,120,214,0.10);
+    --s2:           #eb6834;
+    --s3:           #1baf7a;
+    --good:         #0ca30c;
+    --crit:         #d03b3b;
+    --good-ink:     #006300;
+    --crit-ink:     #b02a2a;
+    --shadow:       0 1px 2px rgba(15,20,25,0.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --plane:        #0c0f11;
+      --surface:      #15181b;
+      --surface-sunk: #1d2125;
+      --ink:          #ffffff;
+      --ink-2:        #c3c8cc;
+      --muted:        #8b949d;
+      --rule:         #262c31;
+      --rule-soft:    #1f2428;
+      --baseline:     #394147;
+      --s1:           #3987e5;
+      --s1-wash:      rgba(57,135,229,0.16);
+      --s2:           #d95926;
+      --s3:           #199e70;
+      --good:         #0ca30c;
+      --crit:         #d03b3b;
+      --good-ink:     #0ca30c;
+      --crit-ink:     #e36b6b;
+      --shadow:       0 1px 2px rgba(0,0,0,0.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --plane:        #0c0f11;
+    --surface:      #15181b;
+    --surface-sunk: #1d2125;
+    --ink:          #ffffff;
+    --ink-2:        #c3c8cc;
+    --muted:        #8b949d;
+    --rule:         #262c31;
+    --rule-soft:    #1f2428;
+    --baseline:     #394147;
+    --s1:           #3987e5;
+    --s1-wash:      rgba(57,135,229,0.16);
+    --s2:           #d95926;
+    --s3:           #199e70;
+    --good:         #0ca30c;
+    --crit:         #d03b3b;
+    --good-ink:     #0ca30c;
+    --crit-ink:     #e36b6b;
+    --shadow:       0 1px 2px rgba(0,0,0,0.4);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--plane);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 40px 64px;
+  }
+
+  h1, h2, h3 {
+    font-family: Archivo, "IBM Plex Sans", system-ui, sans-serif;
+    text-wrap: balance;
+    margin: 0;
+    letter-spacing: -0.015em;
+  }
+  h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 700; line-height: 1.08; }
+  h2 { font-size: clamp(19px, 2.6vw, 23px); font-weight: 600; line-height: 1.2; }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+  }
+
+  p { margin: 0; }
+  .prose { max-width: 66ch; color: var(--ink-2); }
+  .prose strong { color: var(--ink); font-weight: 600; }
+  .prose + .prose { margin-top: 10px; }
+
+  /* ---------- masthead ---------- */
+
+  .masthead { display: flex; flex-direction: column; gap: 14px; }
+  .masthead .sub {
+    display: flex; flex-wrap: wrap; gap: 8px 20px;
+    font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--muted);
+  }
+  .masthead .sub span { white-space: nowrap; }
+  .masthead .sub b { color: var(--ink-2); font-weight: 500; }
+
+  /* ---------- month tabs ---------- */
+
+  .tabs {
+    display: flex; gap: 2px; margin-top: 28px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .tab {
+    appearance: none; background: none; border: none; cursor: pointer;
+    font-family: Archivo, system-ui, sans-serif; font-size: 15px; font-weight: 600;
+    color: var(--muted); padding: 10px 16px; border-radius: 5px 5px 0 0;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    display: flex; align-items: baseline; gap: 8px; white-space: nowrap;
+  }
+  .tab:hover { color: var(--ink-2); background: var(--surface-sunk); }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--s1); background: none; }
+  .tab .t-sub {
+    font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 400;
+    color: var(--muted); letter-spacing: 0.02em;
+  }
+  .tab:focus-visible { outline: 2px solid var(--s1); outline-offset: 2px; }
+
+  .part-note {
+    margin-top: 14px; font-size: 12.5px; color: var(--muted);
+    display: flex; gap: 8px; align-items: baseline;
+  }
+
+  section { margin-top: 52px; }
+  .section-head { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+
+  /* ---------- kpi row ---------- */
+
+  .kpis {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: var(--rule); border-block: 1px solid var(--rule); margin-top: 26px;
+  }
+  .kpi { background: var(--surface); padding: 18px 18px 20px; display: flex; flex-direction: column; gap: 4px; }
+  .kpi .k-label { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .kpi .k-val {
+    font-family: Archivo, system-ui, sans-serif; font-size: clamp(24px, 3.4vw, 33px);
+    font-weight: 700; line-height: 1.05; letter-spacing: -0.02em;
+  }
+  .kpi .k-val .unit { font-size: 0.6em; font-weight: 600; color: var(--ink-2); }
+  .kpi .k-note { font-size: 12.5px; color: var(--muted); line-height: 1.35; }
+
+  /* ---------- charts ---------- */
+
+  .chart-block {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 6px;
+    box-shadow: var(--shadow); padding: 20px 18px 14px; position: relative;
+  }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 18px; }
+  .legend-item { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-2); }
+  .swatch { width: 11px; height: 11px; border-radius: 2px; flex: none; }
+  .panel-title {
+    font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2);
+    margin-bottom: 2px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  }
+  .panel-title em { font-style: normal; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--muted); font-size: 11.5px; }
+  .panel + .panel { margin-top: 14px; }
+  .panel svg { display: block; width: 100%; height: auto; }
+  svg text { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+  .ax-label { fill: var(--muted); font-size: 10.5px; }
+  .grid-line { stroke: var(--rule-soft); stroke-width: 1; }
+  .base-line { stroke: var(--baseline); stroke-width: 1; }
+  .ref-line { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 5 4; }
+  .ref-text { fill: var(--muted); font-size: 10.5px; }
+  .hover-band { fill: var(--s1-wash); }
+
+  .tip {
+    position: absolute; pointer-events: none; z-index: 5;
+    background: var(--surface); border: 1px solid var(--baseline);
+    border-radius: 5px; padding: 9px 11px; min-width: 172px;
+    box-shadow: 0 4px 14px rgba(15,20,25,0.14);
+    font-size: 12.5px; opacity: 0; transition: opacity .1s;
+  }
+  .tip[data-on="1"] { opacity: 1; }
+  .tip .t-day { font-family: Archivo, sans-serif; font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+  .tip dl { margin: 0; display: grid; grid-template-columns: auto 1fr auto; gap: 3px 8px; align-items: center; }
+  .tip dt { display: flex; align-items: center; gap: 6px; color: var(--ink-2); grid-column: 1 / 3; }
+  .tip dd { margin: 0; font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; text-align: right; color: var(--ink); }
+  .tip .t-rule { grid-column: 1 / -1; height: 1px; background: var(--rule); margin: 3px 0; }
+
+  /* ---------- finding ---------- */
+
+  .finding {
+    border-left: 3px solid var(--s1); background: var(--surface);
+    border-radius: 0 6px 6px 0; padding: 18px 20px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .phase-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 5px; overflow: hidden; }
+  .phase { background: var(--surface-sunk); padding: 14px 16px; display: flex; flex-direction: column; gap: 3px; }
+  .phase .p-win { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .phase .p-big { font-family: Archivo, sans-serif; font-size: 27px; font-weight: 700; line-height: 1.1; }
+  .phase .p-big small { font-size: .55em; font-weight: 600; color: var(--ink-2); }
+  .phase .p-det { font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+  /* ---------- tables ---------- */
+
+  .t-scroll { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  caption { text-align: left; padding: 14px 16px 0; color: var(--muted); font-size: 12.5px; }
+  th, td { padding: 9px 14px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--rule-soft); }
+  th {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px; font-weight: 600;
+    letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted);
+    border-bottom: 1px solid var(--baseline); background: var(--surface);
+  }
+  th:first-child, td:first-child { text-align: left; white-space: normal; min-width: 190px; }
+  tbody tr:last-child td { border-bottom: none; }
+  tfoot td { border-top: 1px solid var(--baseline); border-bottom: none; font-weight: 600; background: var(--surface-sunk); }
+  .num { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; }
+  .cname { display: flex; align-items: center; gap: 8px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .best { color: var(--good-ink); font-weight: 600; }
+  .worstv { color: var(--crit-ink); font-weight: 600; }
+  .meter { display: block; height: 5px; border-radius: 2px; background: var(--s1); min-width: 2px; }
+  .meter-cell { width: 110px; }
+  .meter-track { background: var(--surface-sunk); border-radius: 2px; height: 5px; width: 100%; }
+  .tag {
+    display: inline-block; font-family: "IBM Plex Mono", monospace; font-size: 10px;
+    letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 6px; border-radius: 3px;
+    background: var(--surface-sunk); color: var(--ink-2); border: 1px solid var(--rule);
+  }
+
+  footer {
+    margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--rule);
+    display: flex; flex-direction: column; gap: 12px;
+    font-size: 12.5px; color: var(--muted); max-width: 72ch;
+  }
+  footer b { color: var(--ink-2); font-weight: 600; }
+  footer ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 7px; }
+
+  @media (max-width: 760px) {
+    .kpis { grid-template-columns: 1fr 1fr; }
+    .phase-pair { grid-template-columns: 1fr; }
+    .tab { padding: 9px 11px; font-size: 14px; }
+  }
+  @media (max-width: 430px) {
+    .kpis { grid-template-columns: 1fr; }
+    th:first-child, td:first-child { min-width: 150px; }
+    .tab { flex-direction: column; gap: 1px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Meta ads &middot; Phone calls</p>
+    <h1>Halcyon Pain Management</h1>
+    <p class="prose">Call advertising across both Halcyon ad accounts &mdash; what went out, how many patients dialled,
+      and what each call cost. Figures pulled from Meta on 11 September 2026 and reconciled to the rupee against each
+      account&rsquo;s own daily totals.</p>
+    <div class="sub">
+      <span><b>Pallavi Halcyon</b> &nbsp;1999324147481098</span>
+      <span><b>Pallavi Kiran</b> &nbsp;694358492762548</span>
+      <span>All amounts INR, ex-GST</span>
+    </div>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Reporting month">
+    <button class="tab" role="tab" id="tab-aug" aria-controls="report" data-month="aug" aria-selected="true">
+      August <span class="t-sub">1&ndash;31</span>
+    </button>
+    <button class="tab" role="tab" id="tab-sep" aria-controls="report" data-month="sep" aria-selected="false" tabindex="-1">
+      September <span class="t-sub">1&ndash;10</span>
+    </button>
+  </div>
+
+  <div id="report" role="tabpanel" aria-labelledby="tab-aug">
+
+    <p class="part-note" id="part-note"></p>
+
+    <div class="kpis" id="kpis"></div>
+
+    <section>
+      <div class="section-head">
+        <p class="eyebrow">Day by day</p>
+        <h2>Spend, calls and cost per call</h2>
+        <p class="prose" id="chart-intro"></p>
+      </div>
+
+      <div class="chart-block">
+        <div class="legend" id="legend"></div>
+
+        <div class="panel">
+          <div class="panel-title"><span>Amount spent per day</span><em>&#8377;</em></div>
+          <svg id="svg-spend" role="img" aria-label="Daily amount spent, stacked by ad account"></svg>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title"><span>Phone calls placed per day</span><em>calls</em></div>
+          <svg id="svg-calls" role="img" aria-label="Daily phone calls placed, stacked by ad account"></svg>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title"><span>Cost per call</span><em>&#8377; per call, both accounts</em></div>
+          <svg id="svg-cpc" role="img" aria-label="Daily cost per phone call against the period average"></svg>
+        </div>
+
+        <div class="tip" id="tip" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <p class="eyebrow">What the shape says</p>
+        <h2 id="finding-title"></h2>
+      </div>
+      <div class="finding">
+        <div class="phase-pair" id="phase-pair"></div>
+        <div id="finding-body"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <p class="eyebrow">Call campaigns</p>
+        <h2>Where the calls came from</h2>
+        <p class="prose">Every campaign whose result Meta reports as <em>Phone calls placed</em>. Campaign names carry
+          the clinic number each ad dials &mdash; 7788, 8585, 7272 &mdash; so the table doubles as a read on which line
+          rang.</p>
+      </div>
+      <div class="t-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Campaign</th><th scope="col">Days live</th><th scope="col">Spent</th>
+              <th scope="col">Calls</th><th scope="col">&#8377; / call</th>
+            </tr>
+          </thead>
+          <tbody id="camp-calls"></tbody>
+          <tfoot id="camp-calls-foot"></tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <p class="eyebrow">Website-lead campaigns</p>
+        <h2 id="web-title"></h2>
+        <p class="prose" id="web-intro"></p>
+      </div>
+      <div class="t-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Campaign</th><th scope="col">Days live</th><th scope="col">Spent</th>
+              <th scope="col">Event counted</th><th scope="col">Count</th><th scope="col">&#8377; each</th>
+            </tr>
+          </thead>
+          <tbody id="camp-web"></tbody>
+          <tfoot id="camp-web-foot"></tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <p class="eyebrow">Who dialled</p>
+        <h2>Calls by age band</h2>
+        <p class="prose" id="age-intro"></p>
+      </div>
+      <div class="t-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Age</th><th scope="col">Spent</th><th scope="col">Share of spend</th>
+              <th scope="col">Calls</th><th scope="col">&#8377; / call</th>
+            </tr>
+          </thead>
+          <tbody id="age-rows"></tbody>
+          <tfoot id="age-foot"></tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <p class="eyebrow">Every day</p>
+        <h2 id="day-title"></h2>
+        <p class="prose">The numbers behind the charts. <em>Calls</em> is Meta&rsquo;s <em>Phone calls placed</em>;
+          <em>&#8377;/call</em> divides that day&rsquo;s call-ad spend only, so the website-lead column never inflates it.</p>
+      </div>
+      <div class="t-scroll">
+        <table>
+          <caption>Reach is the sum of each day&rsquo;s reach and counts a person once per day they were served.</caption>
+          <thead>
+            <tr>
+              <th scope="col" id="day-col">Day</th><th scope="col">Call spend</th><th scope="col">Calls</th>
+              <th scope="col">&#8377; / call</th><th scope="col">Web spend</th><th scope="col">Site leads</th>
+              <th scope="col">Total spend</th><th scope="col">Impressions</th><th scope="col">Reach</th>
+              <th scope="col">Clicks</th>
+            </tr>
+          </thead>
+          <tbody id="day-rows"></tbody>
+          <tfoot id="day-foot"></tfoot>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <p><b>How this was built.</b> Campaign-level daily figures were pulled per account from the Meta Ads API and summed.
+      For both accounts, and on every day in both reporting windows, the campaign sums match the account&rsquo;s own
+      daily spend and impressions exactly &mdash; nothing is missing or double-counted.</p>
+    <ul>
+      <li><b>Calls</b> are Meta&rsquo;s <em>Phone calls placed</em>
+        (<span class="num">click_to_call_native_call_placed</span>), the only call metric Meta exposes. It counts taps
+        that opened the dialler, not conversations answered at the clinic, so the clinic&rsquo;s own log will read lower.</li>
+      <li><b>Cost per call</b> divides only the spend of campaigns optimising for calls. Blending in the website-lead
+        budget would overstate what a call costs.</li>
+      <li><b>September stops at the 10th.</b> Meta keeps revising the most recent ~48 hours, so 11 September is a live
+        part-day and is excluded rather than shown as a collapse in spend. It will settle into the next refresh.</li>
+      <li><b>Reach</b> in the day tables is summed per day and double-counts people across days; the de-duplicated
+        figure for each window is on the Reach tile above.</li>
+      <li>A few paise of call spend fall in an <em>Unknown</em> age band and are omitted from the age table only.</li>
+      <li>All figures are ex-GST. Meta bills 18% GST on top in India.</li>
+    </ul>
+  </footer>
+</div>
+
+<script>
+/* ---- Baked figures. Meta Ads API, pulled 11 Sep 2026. -------------------
+   DAILY row: [day, a1CallSpend, a1Calls, a1WebSpend, a1WebLeads,
+               a2CallSpend, a2Calls, impressions, reachSum, linkClicks]
+   a1 = Pallavi Halcyon (1999324147481098), a2 = Pallavi Kiran (694358492762548) */
+
+const DAILY_AUG=[
+[1,9158.29,255,0,0,4658.1,89,271368,217116,1293],
+[2,7189.93,160,0,0,5027.95,109,219681,174330,1092],
+[3,7456.54,180,0,0,4991.92,89,200109,159724,1145],
+[4,6732.76,228,0,0,4280.8,60,186759,147563,1139],
+[5,5738.49,160,0,0,4596.02,74,168311,132494,787],
+[6,6040.22,158,0,0,4214.48,52,165332,131268,777],
+[7,7835.1,227,0,0,3799.41,63,194875,158714,874],
+[8,5837.71,153,0,0,3972.09,69,151047,122942,705],
+[9,6481.03,107,0,0,5516.99,77,160999,124376,661],
+[10,5420.96,76,809.85,12,3566.8,56,120925,99370,794],
+[11,4853.48,65,2129.71,11,4105.73,56,146308,118207,1119],
+[12,2653.72,39,1111.12,0,4714.81,65,125748,102004,646],
+[13,3931.07,67,711.15,0,4143,53,127656,105367,771],
+[14,5585.37,59,2685.3,17,5084.93,60,162774,132353,1167],
+[15,5591.5,72,1870.68,11,3853.63,53,128409,107360,1055],
+[16,5398.76,83,2632.88,27,4644.61,58,142635,117280,1063],
+[17,4938.9,51,3063.1,23,4524.77,69,142009,113199,1106],
+[18,3374.8,35,3206.32,29,4142.91,44,131658,109219,1078],
+[19,5145.56,76,2312.33,16,5609.54,64,163900,132089,845],
+[20,5286.23,72,2513.45,10,4171.88,56,133543,110569,662],
+[21,5165.41,56,3826.74,14,4433.91,63,168907,136180,863],
+[22,5179.68,72,2756.58,8,3796.55,63,143316,117173,793],
+[23,696.32,11,399.06,5,4278.98,60,70590,55781,239],
+[24,3935.58,55,622.2,5,4550.58,73,125879,99238,453],
+[25,5907.46,77,3620.55,66,4466.01,52,179445,145651,865],
+[26,6310.02,98,5062.94,20,5113.5,70,214175,171465,1148],
+[27,5535.14,66,4221.37,11,4312.19,57,179363,141605,1019],
+[28,3179.1,51,2890.68,5,3866.48,64,153638,126028,746],
+[29,5915.99,93,4183.2,34,5078.41,90,223951,182860,1090],
+[30,4475.52,82,996.33,0,6776.37,89,170932,134001,560],
+[31,4507.48,79,1818.24,8,6851.35,84,172942,132817,671]
+];
+
+const DAILY_SEP=[
+[1,3907.49,69,1971.36,9,5788.67,85,145777,115371,592],
+[2,3297.31,46,1390.22,1,6521.43,86,143752,112408,449],
+[3,3548.24,57,761.77,5,6442.63,95,146408,113975,450],
+[4,2450.28,52,0,0,6672.54,96,122778,94873,345],
+[5,4376.48,61,0,0,5669.67,64,145611,115555,402],
+[6,4184.6,56,0,0,7237.45,82,150719,119216,422],
+[7,4013.25,74,0,0,6708.17,83,152047,123096,433],
+[8,4175.89,62,0,0,6119.86,66,152463,122845,409],
+[9,3267.24,55,0,0,7136.63,96,132016,104196,408],
+[10,3844.36,72,0,0,7018.69,93,150765,120253,448]
+];
+
+/* campaign rows: [name, account(1|2), daysLive, spend, calls] */
+const MONTHS={
+  aug:{
+    id:"aug", label:"August 2026", short:"Aug", range:"1&ndash;31 Aug 2026", days:31,
+    spend:362046.60, calls:5144, callSpend:308602.82, cpc:59.99,
+    webSpend:53443.78, webLeads:332,
+    impressions:5047184, clicks:27226,
+    reach:[1139310,612279], freq:[2.68,3.25],
+    daily:DAILY_AUG,
+    partNote:"",
+    chartIntro:"Three panels on one calendar. The top panel splits the daily budget by account and separates the "+
+      "website-lead campaigns that started on 10 August; the middle panel counts calls; the bottom panel divides one "+
+      "by the other. Hover any day to read all three at once.",
+    findingTitle:"Calls got 61% more expensive after 9 August",
+    phases:[
+      {win:"1&ndash;9 August", big:"&#8377;44.82", det:"2,310 calls on &#8377;1,03,528 &mdash; 257 calls a day"},
+      {win:"10&ndash;31 August", big:"&#8377;72.36", det:"2,834 calls on &#8377;2,05,075 &mdash; 129 calls a day"}
+    ],
+    findingBody:
+      "<p class='prose'>Two things changed on 10 August. Budget started moving off call ads and onto website-lead "+
+      "campaigns &mdash; <strong>&#8377;53,444, or 34% of the Pallavi Halcyon budget from the 10th onward</strong> "+
+      "&mdash; and the two cheapest call campaigns stopped. <strong>Halcyon | Calls &mdash; Age 35+ | FB only | CBO</strong> "+
+      "ran only 1&ndash;8 August and delivered 410 calls at <strong>&#8377;19.60</strong>, the best cost per call of the "+
+      "month by a wide margin; it was spending just &#8377;1,000 a day when it ended. Daily call volume halved from 257 "+
+      "to 129, while the clinic's cost to earn one ring went from &#8377;44.82 to &#8377;72.36.</p>"+
+      "<p class='prose'>The website-lead spend is not wasted &mdash; it bought 332 site enquiries &mdash; but it buys a "+
+      "different thing at a different price, and it is the reason the call line falls away in the middle panel above.</p>",
+    campCalls:[
+      ["ad set level 3 camp",1,"1&ndash;31",72430.91,1258],
+      ["Kiran | Calls &mdash; 3 Numbers | ABO",2,"1&ndash;31",139362.34,2029],
+      ["Halcyon | Calls &mdash; Core | CBO",1,"1&ndash;31",31589.75,384],
+      ["Shoulder pain | video + images 7272 - Copy",1,"1&ndash;29",28528.78,665],
+      ["new 3 ads 8585",1,"1&ndash;31",24872.56,346],
+      ["Halcyon | Calls &mdash; Age 35+ | FB only | CBO",1,"1&ndash;8",8036.12,410],
+      ["New Leads Campaign",2,"29&ndash;31",3782.36,52]
+    ],
+    webTitle:"The other &#8377;53,444",
+    webIntro:"These five ran on the Pallavi Halcyon account from 10 August and sent people to a landing page instead of "+
+      "the phone. Each one optimises for a different pixel event, so the counts below are <strong>not one comparable "+
+      "number</strong> &mdash; the event is named on every row.",
+    campWeb:[
+      ["Halcyon | LP 8585 | Website Leads","13&ndash;31",24961.24,"HContacted",197],
+      ["Halcyon | LP 7788 | Website Leads","18&ndash;31",19068.13,"HContacted",79],
+      ["Halcyon | LP 8585 | Website Leads | 7788","14&ndash;18",5137.10,"HEnquiry",33],
+      ["Halcyon | LP 8585 | Website Leads | TEST - Copy","10&ndash;13",4059.00,"Website leads",23],
+      ["Halcyon | LP 8585 | Website Leads | new","13",218.31,"Website leads",0]
+    ],
+    ageIntro:"Both accounts combined, call campaigns only. The clinic's money concentrates in 35&ndash;54, but the "+
+      "cheapest calls sit on either side of it &mdash; and the under-35 bands only appear because some campaigns "+
+      "targeted broad rather than 35+.",
+    age:[["18&ndash;24",3577.50,97],["25&ndash;34",56482.63,1170],["35&ndash;44",102913.82,1487],
+         ["45&ndash;54",71563.69,1131],["55&ndash;64",45927.69,769],["65+",28135.55,489]]
+  },
+
+  sep:{
+    id:"sep", label:"September 2026", short:"Sep", range:"1&ndash;10 Sep 2026", days:10,
+    spend:106504.23, calls:1450, callSpend:102380.88, cpc:70.61,
+    webSpend:4123.35, webLeads:15,
+    impressions:1442336, clicks:4358,
+    reach:[260051,349314], freq:[2.11,2.56],
+    daily:DAILY_SEP,
+    partNote:"First ten days only &mdash; 11 September is still settling at Meta and is excluded.",
+    chartIntro:"The same three panels over the first ten days of September. Website-lead spend stops after the 3rd, so "+
+      "from the 4th onward every rupee on this chart is buying calls. Hover any day to read all three at once.",
+    findingTitle:"September is running at August's expensive rate, not its cheap one",
+    phases:[
+      {win:"August, whole month", big:"&#8377;59.99", det:"5,144 calls on &#8377;3,08,603 &mdash; 166 calls a day"},
+      {win:"1&ndash;10 September", big:"&#8377;70.61", det:"1,450 calls on &#8377;1,02,381 &mdash; 145 calls a day"}
+    ],
+    findingBody:
+      "<p class='prose'>Cost per call is <strong>18% above the August average</strong>, but that is the wrong "+
+      "comparison to draw comfort from: September is tracking August's <em>second half</em> (&#8377;72.36), not its "+
+      "first nine days (&#8377;44.82). The cheap early-August setup has not come back. "+
+      "<strong>Halcyon | Calls &mdash; Age 35+ | FB only | CBO</strong>, which produced calls at &#8377;19.60, is still "+
+      "switched off.</p>"+
+      "<p class='prose'>Two things did improve. Website-lead spend has almost stopped &mdash; &#8377;4,123 in the first "+
+      "three days and nothing since &mdash; so the budget is back on the phone. And "+
+      "<strong>ad set level 3 camp</strong> is the standout of the month at <strong>&#8377;46.49</strong> a call across "+
+      "413 calls, well under the blended rate. It is the one campaign currently beating August's average, and it is "+
+      "taking only &#8377;1,920 a day.</p>"+
+      "<p class='prose'>The drag is on the Pallavi Kiran account, which is spending 61% more than Pallavi Halcyon "+
+      "(&#8377;65,316 against &#8377;41,188) at &#8377;77.21 a call versus &#8377;61.37 &mdash; and inside it, "+
+      "<strong>New Leads Campaign</strong> is the weakest line at &#8377;89.65.</p>",
+    campCalls:[
+      ["Kiran | Calls &mdash; 3 Numbers | ABO",2,"1&ndash;10",42544.94,592],
+      ["New Leads Campaign",2,"1&ndash;10",22770.80,254],
+      ["ad set level 3 camp",1,"1&ndash;10",19201.48,413],
+      ["7788- call ads-new",1,"3&ndash;10",7801.63,71],
+      ["new 3 ads 8585",1,"1&ndash;10",7633.85,97],
+      ["Halcyon | Calls &mdash; Core | CBO",1,"1&ndash;3",2428.18,23]
+    ],
+    webTitle:"Website leads, wound down",
+    webIntro:"Only one campaign spent, and only until the 3rd. The second row carries four conversions Meta attributed "+
+      "back to a campaign that spent nothing in the window &mdash; a lagging pixel event from its August run, not new "+
+      "delivery.",
+    campWeb:[
+      ["Halcyon | LP 7788 | Website Leads","1&ndash;3",4123.35,"HContacted",11],
+      ["Halcyon | LP 8585 | Website Leads","&mdash;",0,"HContacted",4]
+    ],
+    ageIntro:"Both accounts combined, call campaigns only. September's cheapest calls come from under 35 &mdash; a "+
+      "reversal of August, and driven almost entirely by New Leads Campaign running broad.",
+    age:[["18&ndash;24",4867.07,80],["25&ndash;34",23842.32,406],["35&ndash;44",30966.90,411],
+         ["45&ndash;54",21453.43,280],["55&ndash;64",13185.15,167],["65+",8066.09,105]]
+  }
+};
+
+/* ---------------------------------------------------------------- helpers */
+const SVGNS="http://www.w3.org/2000/svg";
+const RS="\u20B9";
+const inr=n=>n.toLocaleString("en-IN",{maximumFractionDigits:0});
+const inr2=n=>n.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+const el=(t,a)=>{const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
+const lakh=n=>(n/100000).toFixed(1);
+
+function niceMax(v){
+  const pow=Math.pow(10,Math.floor(Math.log10(v)));
+  for(const m of [1,1.2,1.5,2,2.5,3,4,5,6,8,10]){ if(pow*m>=v) return pow*m; }
+  return pow*10;
+}
+function capPath(x,y,w,h,r){
+  r=Math.min(r,w/2,h);
+  return "M"+x+" "+(y+h)+"L"+x+" "+(y+r)+"A"+r+" "+r+" 0 0 1 "+(x+r)+" "+y+
+         "L"+(x+w-r)+" "+y+"A"+r+" "+r+" 0 0 1 "+(x+w)+" "+(y+r)+"L"+(x+w)+" "+(y+h)+"Z";
+}
+
+const GAP=2, PAD_L=54, PAD_R=10, PAD_T=8, PAD_B=20;
+let M=MONTHS.aug;          /* active month */
+let panels=[];
+const tip=document.getElementById("tip");
+
+function drawPanel(svg,opts){
+  const D=M.daily, W=opts.width, H=opts.height;
+  svg.setAttribute("viewBox","0 0 "+W+" "+H);
+  svg.setAttribute("height",H);
+  while(svg.firstChild) svg.removeChild(svg.firstChild);
+
+  const plotW=W-PAD_L-PAD_R, plotH=H-PAD_T-PAD_B;
+  const y=v=>PAD_T+plotH-(v/opts.max)*plotH;
+  const step=plotW/D.length;
+  const bw=Math.max(3,Math.min(26,step-(step>14?4:2)));
+  const cx=i=>PAD_L+step*i+step/2;
+
+  for(const t of opts.ticks){
+    const yy=y(t);
+    svg.appendChild(el("line",{class:t===0?"base-line":"grid-line",x1:PAD_L,x2:W-PAD_R,y1:yy,y2:yy}));
+    const lab=el("text",{class:"ax-label",x:PAD_L-8,y:yy+3.5,"text-anchor":"end"});
+    lab.textContent=opts.fmtTick(t);
+    svg.appendChild(lab);
+  }
+
+  const bandG=el("g",{});
+  svg.appendChild(bandG);
+  opts.bands=[];
+  D.forEach((r,i)=>{
+    const b=el("rect",{class:"hover-band",x:PAD_L+step*i,y:PAD_T,width:step,height:plotH,opacity:0});
+    bandG.appendChild(b); opts.bands.push(b);
+  });
+
+  opts.draw(svg,{y,cx,step,bw,plotH,W,H});
+
+  if(opts.xLabels){
+    const every=step<17?(step<11?5:3):1;
+    D.forEach((r,i)=>{
+      const d=r[0];
+      if(d!==1&&d!==D.length&&(d%every!==0)) return;
+      const t=el("text",{class:"ax-label",x:cx(i),y:H-6,"text-anchor":"middle"});
+      t.textContent=d;
+      svg.appendChild(t);
+    });
+  }
+  return opts;
+}
+
+function stack(svg,g,segs,i){
+  let acc=0;
+  const live=segs.filter(s=>s[0]>0);
+  live.forEach((s,k)=>{
+    const top=acc+s[0], isTop=k===live.length-1;
+    const y0=g.y(top);
+    let h=g.y(acc)-y0;
+    if(k>0) h-=GAP;                 /* 2px surface gap between segments */
+    if(h<0.6) h=0.6;
+    const x=g.cx(i)-g.bw/2;
+    if(isTop) svg.appendChild(el("path",{d:capPath(x,y0,g.bw,h,4),fill:s[1]}));
+    else      svg.appendChild(el("rect",{x:x,y:y0,width:g.bw,height:h,fill:s[1]}));
+    acc=top;
+  });
+}
+
+function buildCharts(){
+  const D=M.daily;
+  const block=document.querySelector(".chart-block");
+  const W=Math.max(300,block.clientWidth-36);
+  const narrow=W<520;
+  panels=[];
+
+  const spendMax=niceMax(Math.max(...D.map(r=>r[1]+r[3]+r[5])));
+  panels.push(drawPanel(document.getElementById("svg-spend"),{
+    width:W,height:narrow?170:210,max:spendMax,
+    ticks:[0,spendMax/4,spendMax/2,spendMax*3/4,spendMax],
+    fmtTick:t=>t===0?"0":RS+inr(t),
+    xLabels:false,
+    draw(svg,g){ D.forEach((r,i)=>stack(svg,g,[[r[1],"var(--s1)"],[r[3],"var(--s3)"],[r[5],"var(--s2)"]],i)); }
+  }));
+
+  const callMax=niceMax(Math.max(...D.map(r=>r[2]+r[6])));
+  panels.push(drawPanel(document.getElementById("svg-calls"),{
+    width:W,height:narrow?150:180,max:callMax,
+    ticks:[0,callMax/2,callMax],
+    fmtTick:t=>inr(t),
+    xLabels:false,
+    draw(svg,g){ D.forEach((r,i)=>stack(svg,g,[[r[2],"var(--s1)"],[r[6],"var(--s2)"]],i)); }
+  }));
+
+  const cpc=D.map(r=>{const c=r[2]+r[6];return c?(r[1]+r[5])/c:null;});
+  const cpcMax=niceMax(Math.max(...cpc.filter(v=>v!==null)));
+  panels.push(drawPanel(document.getElementById("svg-cpc"),{
+    width:W,height:narrow?150:180,max:cpcMax,
+    ticks:[0,cpcMax/2,cpcMax],
+    fmtTick:t=>t===0?"0":RS+inr(t),
+    xLabels:true,
+    draw(svg,g){
+      const ya=g.y(M.cpc);
+      svg.appendChild(el("line",{class:"ref-line",x1:PAD_L,x2:g.W-PAD_R,y1:ya,y2:ya}));
+      const rt=el("text",{class:"ref-text",x:PAD_L+6,y:ya-7,"text-anchor":"start"});
+      rt.textContent=(M.id==="aug"?"month":"period")+" average "+RS+inr2(M.cpc);
+      svg.appendChild(rt);
+
+      let d="";
+      cpc.forEach((v,i)=>{ if(v===null) return; d+=(d?"L":"M")+g.cx(i)+" "+g.y(v); });
+      svg.appendChild(el("path",{d:d,fill:"none",stroke:"var(--s1)","stroke-width":2,
+        "stroke-linejoin":"round","stroke-linecap":"round"}));
+
+      const vals=cpc.filter(v=>v!==null);
+      const hi=cpc.indexOf(Math.max(...vals)), lo=cpc.indexOf(Math.min(...vals));
+      [[lo,"var(--good)"],[hi,"var(--crit)"],[cpc.length-1,"var(--s1)"]].forEach(p=>{
+        svg.appendChild(el("circle",{cx:g.cx(p[0]),cy:g.y(cpc[p[0]]),r:4.5,fill:p[1],
+          stroke:"var(--surface)","stroke-width":2}));
+      });
+      if(!narrow){
+        const lab=(i,txt,dy)=>{
+          let yy=g.y(cpc[i])+dy;
+          if(yy<PAD_T+10) yy=g.y(cpc[i])+17;     /* keep the peak label inside */
+          const t=el("text",{class:"ax-label",x:g.cx(i),y:yy,"text-anchor":"middle"});
+          t.textContent=txt; t.setAttribute("fill","var(--ink-2)"); svg.appendChild(t);
+        };
+        lab(lo,RS+inr2(cpc[lo]),16);
+        lab(hi,RS+inr2(cpc[hi]),-10);
+      }
+    }
+  }));
+}
+
+/* --------------------------------------------------------------- hovering */
+function dayFromEvent(e,svg){
+  const r=svg.getBoundingClientRect();
+  const vbW=svg.viewBox.baseVal.width;
+  const x=(e.clientX-r.left)*(vbW/r.width);
+  const i=Math.floor((x-PAD_L)/((vbW-PAD_L-PAD_R)/M.daily.length));
+  return (i<0||i>=M.daily.length)?-1:i;
+}
+
+function showTip(i,e){
+  panels.forEach(p=>p.bands.forEach((b,k)=>b.setAttribute("opacity",k===i?1:0)));
+  if(i<0||!e){ tip.dataset.on="0"; return; }
+  const r=M.daily[i], calls=r[2]+r[6], cs=r[1]+r[5], tot=cs+r[3];
+  const sw=c=>'<span class="swatch" style="background:'+c+'"></span>';
+  tip.innerHTML='<div class="t-day">'+r[0]+" "+M.label+'</div><dl>'+
+    "<dt>"+sw("var(--s1)")+"Halcyon calls</dt><dd>"+r[2]+"</dd>"+
+    "<dt>"+sw("var(--s2)")+"Kiran calls</dt><dd>"+r[6]+"</dd>"+
+    '<div class="t-rule"></div>'+
+    "<dt>Call-ad spend</dt><dd>"+RS+inr(cs)+"</dd>"+
+    "<dt>Cost per call</dt><dd>"+(calls?RS+inr2(cs/calls):"&mdash;")+"</dd>"+
+    (r[3]>0?'<div class="t-rule"></div><dt>'+sw("var(--s3)")+"Website leads</dt><dd>"+r[4]+"</dd>"+
+      "<dt>Website-lead spend</dt><dd>"+RS+inr(r[3])+"</dd>":"")+
+    '<div class="t-rule"></div>'+
+    "<dt>Total spent</dt><dd>"+RS+inr(tot)+"</dd></dl>";
+  tip.dataset.on="1";
+
+  const br=document.querySelector(".chart-block").getBoundingClientRect();
+  let left=e.clientX-br.left+14;
+  if(left+tip.offsetWidth>br.width-8) left=e.clientX-br.left-tip.offsetWidth-14;
+  if(left<8) left=8;
+  let top=e.clientY-br.top+14;
+  if(top+tip.offsetHeight>br.height-8) top=Math.max(8,e.clientY-br.top-tip.offsetHeight-14);
+  tip.style.left=left+"px";
+  tip.style.top=top+"px";
+}
+
+["svg-spend","svg-calls","svg-cpc"].forEach(id=>{
+  const svg=document.getElementById(id);
+  svg.addEventListener("pointermove",e=>showTip(dayFromEvent(e,svg),e));
+  svg.addEventListener("pointerleave",()=>showTip(-1));
+});
+
+/* ----------------------------------------------------------------- render */
+function renderKpis(){
+  const perDay=M.spend/M.days, callsDay=M.calls/M.days;
+  document.getElementById("kpis").innerHTML=
+    '<div class="kpi"><span class="k-label">Amount spent</span>'+
+      '<span class="k-val"><span class="unit">'+RS+'</span>'+inr(M.spend)+'</span>'+
+      '<span class="k-note">'+RS+inr(perDay)+' a day across both accounts</span></div>'+
+    '<div class="kpi"><span class="k-label">Phone calls placed</span>'+
+      '<span class="k-val">'+inr(M.calls)+'</span>'+
+      '<span class="k-note">'+Math.round(callsDay)+' a day on average</span></div>'+
+    '<div class="kpi"><span class="k-label">Cost per call</span>'+
+      '<span class="k-val"><span class="unit">'+RS+'</span>'+inr2(M.cpc)+'</span>'+
+      '<span class="k-note">On the '+RS+inr(M.callSpend)+' spent on call ads</span></div>'+
+    '<div class="kpi"><span class="k-label">Reach</span>'+
+      '<span class="k-val">'+lakh(M.reach[0])+'<span class="unit">L</span> + '+lakh(M.reach[1])+'<span class="unit">L</span></span>'+
+      '<span class="k-note">Per account, de-duplicated. '+lakh(M.impressions)+'L impressions, '+inr(M.clicks)+' link clicks</span></div>';
+}
+
+function renderTables(){
+  const dot=a=>'<span class="dot" style="background:'+(a===1?"var(--s1)":"var(--s2)")+'"></span>';
+  const cpcs=M.campCalls.filter(c=>c[4]>0).map(c=>c[3]/c[4]);
+  const best=Math.min(...cpcs), worst=Math.max(...cpcs);
+
+  document.getElementById("camp-calls").innerHTML=M.campCalls.map(c=>{
+    const v=c[4]?c[3]/c[4]:null;
+    const cls=v===best?"best":(v===worst?"worstv":"");
+    return "<tr><td><span class='cname'>"+dot(c[1])+"<span>"+c[0]+"</span></span></td>"+
+      "<td class='num'>"+c[2]+" "+M.short+"</td><td class='num'>"+RS+inr(c[3])+"</td>"+
+      "<td class='num'>"+inr(c[4])+"</td><td class='num "+cls+"'>"+(v?RS+inr2(v):"&mdash;")+"</td></tr>";
+  }).join("");
+  document.getElementById("camp-calls-foot").innerHTML=
+    "<tr><td>All call campaigns</td><td class='num'>&mdash;</td><td class='num'>"+RS+inr(M.callSpend)+
+    "</td><td class='num'>"+inr(M.calls)+"</td><td class='num'>"+RS+inr2(M.cpc)+"</td></tr>";
+
+  document.getElementById("web-title").innerHTML=M.webTitle;
+  document.getElementById("web-intro").innerHTML=M.webIntro;
+  document.getElementById("camp-web").innerHTML=M.campWeb.map(c=>
+    "<tr><td><span class='cname'><span class='dot' style='background:var(--s3)'></span><span>"+c[0]+"</span></span></td>"+
+    "<td class='num'>"+c[1]+(c[1]==="&mdash;"?"":" "+M.short)+"</td><td class='num'>"+(c[2]?RS+inr(c[2]):RS+"0")+"</td>"+
+    "<td><span class='tag'>"+c[3]+"</span></td><td class='num'>"+(c[4]||"&mdash;")+"</td>"+
+    "<td class='num'>"+(c[4]&&c[2]?RS+inr2(c[2]/c[4]):"&mdash;")+"</td></tr>").join("");
+  document.getElementById("camp-web-foot").innerHTML=
+    "<tr><td>All website-lead campaigns</td><td class='num'>&mdash;</td><td class='num'>"+RS+inr(M.webSpend)+
+    "</td><td class='num'>mixed</td><td class='num'>"+M.webLeads+"</td><td class='num'>"+
+    (M.webLeads?RS+inr2(M.webSpend/M.webLeads):"&mdash;")+"</td></tr>";
+
+  document.getElementById("age-intro").innerHTML=M.ageIntro;
+  const ageTot=M.age.reduce((s,a)=>s+a[1],0);
+  const ac=M.age.map(a=>a[1]/a[2]);
+  const aBest=Math.min(...ac), aWorst=Math.max(...ac);
+  document.getElementById("age-rows").innerHTML=M.age.map(a=>{
+    const v=a[1]/a[2], pct=a[1]/ageTot*100;
+    const cls=v===aBest?"best":(v===aWorst?"worstv":"");
+    return "<tr><td class='num'>"+a[0]+"</td><td class='num'>"+RS+inr(a[1])+"</td>"+
+      "<td class='meter-cell'><span class='meter-track'><span class='meter' style='width:"+pct.toFixed(1)+"%'></span></span>"+
+      "<span class='num' style='font-size:11.5px;color:var(--muted)'>"+pct.toFixed(0)+"%</span></td>"+
+      "<td class='num'>"+inr(a[2])+"</td><td class='num "+cls+"'>"+RS+inr2(v)+"</td></tr>";
+  }).join("");
+  const ageCalls=M.age.reduce((s,a)=>s+a[2],0);
+  document.getElementById("age-foot").innerHTML=
+    "<tr><td>All ages</td><td class='num'>"+RS+inr(ageTot)+"</td><td class='num'>100%</td>"+
+    "<td class='num'>"+inr(ageCalls)+"</td><td class='num'>"+RS+inr2(ageTot/ageCalls)+"</td></tr>";
+
+  document.getElementById("day-title").innerHTML="Every day of "+M.label.split(" ")[0]+", both accounts";
+  document.getElementById("day-col").textContent=M.short;
+  const T=[0,0,0,0,0,0,0,0];
+  document.getElementById("day-rows").innerHTML=M.daily.map(r=>{
+    const cs=r[1]+r[5], calls=r[2]+r[6], tot=cs+r[3];
+    T[0]+=cs; T[1]+=calls; T[2]+=r[3]; T[3]+=r[4]; T[4]+=tot; T[5]+=r[7]; T[6]+=r[8]; T[7]+=r[9];
+    return "<tr><td class='num'>"+r[0]+"</td><td class='num'>"+RS+inr2(cs)+"</td><td class='num'>"+calls+"</td>"+
+      "<td class='num'>"+(calls?RS+inr2(cs/calls):"&mdash;")+"</td>"+
+      "<td class='num'>"+(r[3]?RS+inr2(r[3]):"&mdash;")+"</td><td class='num'>"+(r[4]||"&mdash;")+"</td>"+
+      "<td class='num'>"+RS+inr2(tot)+"</td><td class='num'>"+inr(r[7])+"</td>"+
+      "<td class='num'>"+inr(r[8])+"</td><td class='num'>"+inr(r[9])+"</td></tr>";
+  }).join("");
+  document.getElementById("day-foot").innerHTML=
+    "<tr><td>"+M.short+"</td><td class='num'>"+RS+inr2(T[0])+"</td><td class='num'>"+inr(T[1])+"</td>"+
+    "<td class='num'>"+RS+inr2(T[0]/T[1])+"</td><td class='num'>"+RS+inr2(T[2])+"</td>"+
+    "<td class='num'>"+inr(T[3])+"</td><td class='num'>"+RS+inr2(T[4])+"</td><td class='num'>"+inr(T[5])+"</td>"+
+    "<td class='num'>"+inr(T[6])+"</td><td class='num'>"+inr(T[7])+"</td></tr>";
+}
+
+function renderNarrative(){
+  document.getElementById("part-note").innerHTML=
+    M.partNote?'<span class="tag">Note</span><span>'+M.partNote+"</span>":"";
+  document.getElementById("chart-intro").innerHTML=M.chartIntro;
+  document.getElementById("finding-title").innerHTML=M.findingTitle;
+  document.getElementById("phase-pair").innerHTML=M.phases.map(p=>
+    '<div class="phase"><span class="p-win">'+p.win+'</span>'+
+    '<span class="p-big">'+p.big+' <small>per call</small></span>'+
+    '<span class="p-det">'+p.det+"</span></div>").join("");
+  document.getElementById("finding-body").innerHTML=M.findingBody;
+  document.getElementById("legend").innerHTML=
+    '<span class="legend-item"><span class="swatch" style="background:var(--s1)"></span>Pallavi Halcyon &mdash; call ads</span>'+
+    (M.webSpend>0?'<span class="legend-item"><span class="swatch" style="background:var(--s3)"></span>Pallavi Halcyon &mdash; website leads</span>':"")+
+    '<span class="legend-item"><span class="swatch" style="background:var(--s2)"></span>Pallavi Kiran &mdash; call ads</span>';
+}
+
+function render(){
+  renderNarrative();
+  renderKpis();
+  renderTables();
+  buildCharts();
+  showTip(-1);
+}
+
+/* ------------------------------------------------------------------- tabs */
+const tabs=[...document.querySelectorAll(".tab")];
+function selectMonth(id,focus){
+  M=MONTHS[id];
+  tabs.forEach(t=>{
+    const on=t.dataset.month===id;
+    t.setAttribute("aria-selected",on?"true":"false");
+    t.tabIndex=on?0:-1;
+    if(on&&focus) t.focus();
+  });
+  document.getElementById("report").setAttribute("aria-labelledby","tab-"+id);
+  render();
+}
+tabs.forEach(t=>{
+  t.addEventListener("click",()=>selectMonth(t.dataset.month));
+  t.addEventListener("keydown",e=>{
+    if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft") return;
+    e.preventDefault();
+    const i=tabs.indexOf(t), n=(i+(e.key==="ArrowRight"?1:tabs.length-1))%tabs.length;
+    selectMonth(tabs[n].dataset.month,true);
+  });
+});
+
+render();
+
+let rt;
+new ResizeObserver(()=>{clearTimeout(rt);rt=setTimeout(()=>{buildCharts();showTip(-1);},120);})
+  .observe(document.querySelector(".chart-block"));
+</script>
