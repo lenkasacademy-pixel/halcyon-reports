@@ -181,8 +181,18 @@ The page is built to work at 320–430px, and there are a few rules to keep:
   title (`#cpc-unit`) when narrow.
 - KPI tiles are 2-up down to 360px, 1-up below.
 
+- **`<meta name="viewport">` must stay on line 1.** Without it mobile Safari
+  renders at a 980px virtual viewport and scales the whole page down, so every
+  media query above is dead and the page looks like the desktop layout shrunk.
+  The Artifact wrapper injects its own viewport tag, so the artifact copy hides
+  this bug — only the GitHub Pages copy shows it. A duplicate tag in the artifact
+  is harmless; both carry the same directive.
+
 Verify changes at phone width by loading the page in a 390px-wide `<iframe>` —
-resizing the browser window does not reliably change the viewport for testing.
+resizing the browser window does not reliably change the viewport. **Note the
+iframe does not reproduce the mobile virtual viewport**, so it cannot catch a
+missing viewport meta; check that tag separately, or open the real URL on a
+phone.
 
 - The file is deliberately **pure ASCII**: the rupee sign is `&#8377;` in markup
   and `\u20B9` in script (via the `RS` constant), dashes are entities/escapes. It
