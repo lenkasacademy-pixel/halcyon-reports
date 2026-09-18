@@ -13,8 +13,8 @@ A single self-contained `index.html` with a **month tab bar** (August /
 September). Figures are baked into the `DAILY_AUG` / `DAILY_SEP` arrays and the
 `MONTHS` object near the bottom of the file — nothing calls the network.
 
-**Scope: two tabs.** August 2026 (1–31, complete) and September 2026 (1–16).
-September deliberately stops at the 11th — Meta keeps revising the most recent
+**Scope: two tabs.** August 2026 (1–31, complete) and September 2026 (1–17).
+September deliberately stops at the 17th — Meta keeps revising the most recent
 ~48h, and the live part-day moves between calls minutes apart. Showing it would
 read as a collapse in spend that is not real.
 
@@ -35,22 +35,27 @@ read as a collapse in spend that is not real.
 
 ## Snapshot
 
-Frozen **12 Sep 2026**.
+Frozen **18 Sep 2026**.
 
-| | August (1–31) | September (1–16) |
+| | August (1–31) | September (1–17) |
 |---|---|---|
-| Spent | ₹3,62,046.60 | ₹1,68,740.55 |
-| Calls placed | 5,144 | 2,362 |
-| Cost per call | **₹59.99** | **₹69.69** |
-| Lasted 20s+ | 1,448 (28.1%) · ₹213.12 | 718 (30.4%) · ₹229.27 |
-| Lasted 60s+ | 608 (11.8%) · ₹507.57 | 327 (13.8%) · ₹503.42 |
-| Pallavi Halcyon | ₹2,18,901.90 / 3,063 / ₹54.02 | ₹58,084.28 / 984 / **₹59.03** |
-| Pallavi Kiran | ₹1,43,144.70 / 2,081 / ₹68.79 | ₹1,06,532.92 / 1,378 / ₹77.31 |
+| Spent | ₹3,62,046.60 | ₹1,80,837.26 |
+| Calls placed | 5,144 | 2,510 |
+| Cost per call | **₹59.99** | **₹70.40** |
+| Lasted 20s+ | 1,448 (28.1%) · ₹213.12 | 765 (30.5%) · ₹231.00 |
+| Lasted 60s+ | 608 (11.8%) · ₹507.57 | 345 (13.7%) · ₹512.21 |
+| Pallavi Halcyon | ₹2,18,901.90 / 3,063 / ₹54.02 | ₹62,544.15 / 1,047 / ₹59.74 |
+| Pallavi Kiran | ₹1,43,144.70 / 2,081 / ₹68.79 | ₹1,14,169.76 / 1,463 / ₹78.04 |
+
+(Both September account rows are **call spend only**; the ₹4,123 of website-lead
+spend sits outside them. August's Pallavi Halcyon row is total spend, its cost
+per call call-only — that inconsistency is in the August figures as published.)
 
 September is tracking August's *second half* (₹72.36), not its first nine days
-(₹44.82) — **but** a higher share of September's calls connect, so a 60-second
-call is actually *cheaper* than in August despite each tap costing 18% more.
-That is the one metric on which September is ahead.
+(₹44.82). The share of calls that connect is still better than August's, but the
+cost of a connected call no longer is: a 60-second call has read ₹494, ₹509,
+₹497, ₹503, ₹512 over the last five days against August's ₹507.57. That line
+straddles the August mark and should be read at month end, not daily.
 
 All figures are **ex-GST** (Meta bills 18% GST on top in India). Unlike
 `o2-reports`, this page does not show a GST-inclusive billed total — if the
@@ -65,19 +70,20 @@ Cost per call rose **61%** on 10 August: ₹44.82 (2,310 calls on ₹1,03,528) f
    website-lead campaigns, which do not produce calls.
 2. `Halcyon | Calls — Age 35+ | FB only | CBO` (`120254451805720348`) stopped
    after 8 Aug. It returned **410 calls at ₹19.60**, the month's best by a wide
-   margin, on ~₹1,000/day. Worth restarting — still off as of 16 Sep.
+   margin, on ~₹1,000/day. Worth restarting — still off as of 18 Sep (₹0.00 in the
+   1–17 Sep pull).
 
-**September (1–16).** ₹69.69 a call, 16% above the August average.
-**Pallavi Halcyon keeps falling** — ₹59.03 against August's ₹59.99, its best
-yet — so the overshoot is one account, not the client's advertising. The
-60-second cost sits just under August at ₹503.42; that line has read ₹484, ₹494,
-₹509, ₹497, ₹503 over five days and should be judged at month end, not daily.
+**September (1–17).** ₹70.40 a call, 17% above the August average.
+The gap is one account, not the client's advertising: Pallavi Halcyon runs
+₹59.74 a call against Pallavi Kiran's ₹78.04. Pallavi Halcyon is drifting up
+though — ₹59.03 on the 1–16 cut, ₹59.74 on 1–17, against its own August
+call-only rate of ₹54.02 — so do not read it as still improving.
 Website-lead spend has almost stopped (₹4,123 in the first three days, nothing
 since), so the budget is back on the phone.
-`ad set level 3 camp` is the standout at **₹44.51** across 684 calls on only
-~₹1,903/day — the one line beating August's average.
-The drag is the Pallavi Kiran account: 83% more spend than Pallavi Halcyon at
-₹77.31 vs ₹59.03 a call, with `New Leads Campaign` weakest at ₹94.21.
+`ad set level 3 camp` is the standout at **₹45.04** across 727 calls on only
+~₹1,926/day — the one line beating August's average.
+Inside Pallavi Kiran, `New Leads Campaign` is the weakest at ₹96.22 against
+`Kiran | Calls — 3 Numbers | ABO` at ₹70.91.
 
 ## 20s and 60s calls are derived, not reported
 
@@ -103,7 +109,7 @@ Watch the quality/price trade: `Halcyon | Calls — Age 35+ | FB only | CBO` has
 by far the cheapest placed calls (₹19.60) **and** the cheapest 20s calls
 (₹91.32), but the worst 60s rate of any campaign (3.4%) — its calls skew short,
 so the headline number flatters it. In September, `7788- call ads-new` is the
-one to watch: 76 calls, only 4 past 60 seconds, at ₹2,168 each.
+one to watch: 131 calls, only 8 past 60 seconds, at ₹1,807 each.
 
 ## Two result types — do not merge them
 
@@ -158,9 +164,14 @@ Pull with Meta MCP `ads_get_ad_entities`, `level: "campaign"`,
   ₹1.93 and 1 call land in an `Unknown` band and are omitted from the age table.
 - `reachSum` is the sum of each day's reach and double-counts people across days.
   Meta's de-duplicated August reach was 11,39,310 (Pallavi Halcyon, frequency
-  2.68) and 6,12,279 (Pallavi Kiran, frequency 3.25); September 1-11 is 2,88,579
-  (2.13) and 3,82,632 (2.61) — those come from a call *without* `time_increment`
+  2.68) and 6,12,279 (Pallavi Kiran, frequency 3.25); September 1-17 is 4,25,204
+  (2.35) and 5,21,871 (2.92) — those come from a call *without* `time_increment`
   and are quoted in the footer only.
+- The `reachSum` column is **each account's own daily reach, added together** —
+  two numbers, not a sum over campaigns. September days 1–10 were originally
+  built from campaign-level reach, which double-counts within an account and ran
+  5–9k a day high; they were rebuilt from the account pull on 18 Sep so the
+  column means one thing down its whole length.
 - Recent days keep settling for ~48h; re-pull the whole month rather than
   appending.
 - `campCalls` rows are
