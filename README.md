@@ -35,7 +35,19 @@ read as a collapse in spend that is not real.
 
 ## Snapshot
 
-Frozen **23 Sep 2026**.
+Frozen **24 Sep 2026**, and the data window is still 1–22 September.
+
+> **Pallavi Kiran `694358492762548` stopped answering on 24 Sep 2026.** It is no
+> longer listed by `ads_get_ad_accounts` for this login and every call returns
+> *"Ad account not found or you do not have access"*. It answered normally at
+> 5:19pm IST on the 23rd. Pallavi Halcyon is unaffected — it spent ₹4,122.29
+> across 89 calls on the 23rd (`ad set level 3 camp` ₹1,939.18 / 52,
+> `7788- call ads-new – Copy` ₹1,355.32 / 21, `new 3 ads 8585` ₹827.79 / 16).
+>
+> The September window deliberately stays at **1–22** rather than advancing one
+> account without the other, which would understate the month. Restore access,
+> then re-pull both accounts for 23 Sep onward. Nothing in this report is wrong;
+> it has just stopped moving.
 
 | | August (1–31) | September (1–22) |
 |---|---|---|
