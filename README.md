@@ -35,8 +35,8 @@ read as a collapse in spend that is not real.
 
 ## Snapshot
 
-Frozen **25 Sep 2026**, and the data window is still 1–22 September — a second
-day held.
+Frozen **25 Sep 2026, 10:30 pm IST**, and the data window is still
+1–22 September — a third day held.
 
 > **Pallavi Kiran `694358492762548` stopped answering on 24 Sep 2026.** It is no
 > longer listed by `ads_get_ad_accounts` for this login and every call returns
@@ -45,12 +45,21 @@ day held.
 > across 89 calls on the 23rd (`ad set level 3 camp` ₹1,939.18 / 52,
 > `7788- call ads-new – Copy` ₹1,355.32 / 21, `new 3 ads 8585` ₹827.79 / 16).
 >
-> **Pallavi Halcyon has now all but stopped too.** ₹4,122.29 across 89 calls on
-> the 23rd, then **₹47.85 for 10 calls on the 24th**, and ₹0.00 so far on the
-> 25th — with `ad set level 3 camp`, `new 3 ads 8585` and `7788- call ads-new –
-> Copy` all still ACTIVE at Meta. That is a delivery or billing stop on the one
+> **Pallavi Halcyon has now stopped completely.** ₹4,122.29 across 89 calls on
+> the 23rd, then **₹47.85 for 10 calls on the 24th**, then **₹0.00 for the whole
+> of the 25th** — Meta returns no row for that day at all, so not one impression
+> was served. `ad set level 3 camp`, `new 3 ads 8585` and `7788- call ads-new –
+> Copy` are all still ACTIVE, and the two with daily budgets report their full
+> ₹1,000 and ₹800 still unspent. That is a delivery or billing stop on the one
 > account still readable, not a pause anybody made. Check the payment method on
-> `1999324147481098` first; O2 showed exactly this shape on 18 Sep.
+> `1999324147481098` first; O2 showed exactly this shape on 18 Sep, and that one
+> recovered on its own the next day. This one has not, two days in.
+>
+> One detail worth knowing before blaming billing outright: `ad set level 3 camp`
+> reports `budget_remaining: 0`. It is the account's biggest campaign
+> (₹2,11,265.27 lifetime, 3,455 calls) and runs on a lifetime rather than a daily
+> budget, so that campaign may simply have exhausted its budget. It does **not**
+> explain the other two, which have ₹1,800/day between them and spent nothing.
 >
 > The September window deliberately stays at **1–22** rather than advancing one
 > account without the other, which would understate the month. Restore access,
