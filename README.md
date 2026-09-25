@@ -35,7 +35,8 @@ read as a collapse in spend that is not real.
 
 ## Snapshot
 
-Frozen **24 Sep 2026**, and the data window is still 1–22 September.
+Frozen **25 Sep 2026**, and the data window is still 1–22 September — a second
+day held.
 
 > **Pallavi Kiran `694358492762548` stopped answering on 24 Sep 2026.** It is no
 > longer listed by `ads_get_ad_accounts` for this login and every call returns
@@ -43,6 +44,13 @@ Frozen **24 Sep 2026**, and the data window is still 1–22 September.
 > 5:19pm IST on the 23rd. Pallavi Halcyon is unaffected — it spent ₹4,122.29
 > across 89 calls on the 23rd (`ad set level 3 camp` ₹1,939.18 / 52,
 > `7788- call ads-new – Copy` ₹1,355.32 / 21, `new 3 ads 8585` ₹827.79 / 16).
+>
+> **Pallavi Halcyon has now all but stopped too.** ₹4,122.29 across 89 calls on
+> the 23rd, then **₹47.85 for 10 calls on the 24th**, and ₹0.00 so far on the
+> 25th — with `ad set level 3 camp`, `new 3 ads 8585` and `7788- call ads-new –
+> Copy` all still ACTIVE at Meta. That is a delivery or billing stop on the one
+> account still readable, not a pause anybody made. Check the payment method on
+> `1999324147481098` first; O2 showed exactly this shape on 18 Sep.
 >
 > The September window deliberately stays at **1–22** rather than advancing one
 > account without the other, which would understate the month. Restore access,
