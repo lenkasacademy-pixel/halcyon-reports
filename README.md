@@ -35,18 +35,34 @@ read as a collapse in spend that is not real.
 
 ## Snapshot
 
-Frozen **27 Sep 2026, 8:40 am IST**, and the data window is still
-1–22 September — a fourth day held.
+Frozen **28 Sep 2026, 10:20 am IST**, and the data window is still
+1–22 September — a fifth day held, now for a different reason.
 
-> **Pallavi Kiran `694358492762548` stopped answering on 24 Sep 2026.** It is no
-> longer listed by `ads_get_ad_accounts` for this login and every call returns
-> *"Ad account not found or you do not have access"*. It answered normally at
-> 5:19pm IST on the 23rd. Pallavi Halcyon is unaffected — it spent ₹4,122.29
-> across 89 calls on the 23rd (`ad set level 3 camp` ₹1,939.18 / 52,
-> `7788- call ads-new – Copy` ₹1,355.32 / 21, `new 3 ads 8585` ₹827.79 / 16).
+> **Pallavi Kiran `694358492762548` answers again** as of 28 Sep, after four
+> days absent from `ads_get_ad_accounts`. It never stopped spending — ₹6,900 to
+> ₹14,300 a day right through the blackout — so that was an access failure, not
+> a delivery one.
 >
-> **Pallavi Halcyon stopped for two days and then recovered on its own.**
-> The sequence, account-level, one account only:
+> **But its campaign breakdown is still broken, and that is now the blocker.**
+>
+> | window | account total | sum of campaign rows | covered |
+> |---|---|---|---|
+> | 1–22 Sep | ₹1,49,609.85 | ₹1,49,609.85 | **100%** |
+> | 23–28 Sep | ₹47,951.48 | ₹16,221.42 | **33.8%** |
+>
+> Per day from the 23rd: 47.1%, **0%**, **0%**, 51.9%, 45.3%. On the 24th and
+> 25th every campaign on the account reports zero against ₹14,522.69 of real
+> spend. This is not pagination or sorting — the three spending campaigns were
+> queried directly by `object_ids` and genuinely return zero.
+>
+> Calls can only be counted at campaign level (`results` is "Not available" at
+> account level). Extending September now would price roughly 190 calls against
+> ₹47,951 and make this account look about three times dearer than it is.
+> **The month stays at the 22nd until Meta's breakdown catches up.** Re-check by
+> comparing the two totals above; when they match, advance the window.
+>
+> **Pallavi Halcyon stopped for two days, recovered on its own, and is now
+> running normally.** Account-level, one account only:
 >
 > | | spend | calls | per call | 20s | per 20s |
 > |---|---|---|---|---|---|
@@ -54,23 +70,15 @@ Frozen **27 Sep 2026, 8:40 am IST**, and the data window is still
 > | 24 Sep | ₹47.85 | 10 | ₹4.79 | 1 | ₹47.85 |
 > | 25 Sep | **₹0.00** | 1 | — | 0 | — |
 > | 26 Sep | ₹6,345.61 | 87 | ₹72.94 | 18 | ₹352.53 |
-> | 27 Sep (to 08:13) | ₹242.87 | 10 | ₹24.29 | 2 | ₹121.44 |
+> | 27 Sep | ₹2,743.54 | 53 | ₹51.76 | 10 | ₹274.35 |
+> | 28 Sep (to 09:56) | ₹0.00 | 3 | — | 0 | — |
 >
-> Meta returned no row at all for the 25th — not one impression — with all three
-> campaigns ACTIVE throughout. Nobody paused anything and nobody restarted it;
-> the activity log is silent on both the stop and the recovery. The 25th's single
-> call is late attribution on zero spend. **Treat the earlier "check the payment
-> method" note as unresolved rather than answered** — the account came back
-> without anyone doing anything, which is the same way it went down.
->
-> **The recovery is dearer than what preceded it.** A call cost ₹46.32 on the
-> 23rd and ₹72.94 on the 26th; a twenty-second call ₹158.55 against ₹352.53.
-> Only 18 of the 87 calls on the 26th held twenty seconds, against 26 of 89 on
-> the 23rd. Worth watching for a few days before reading it as a new normal.
->
-> `ad set level 3 camp` still reports `budget_remaining: 0` on a lifetime budget.
-> It spent ₹3,284.76 on the 26th regardless, so that field was never the
-> explanation for the stop.
+> Nobody paused anything and nobody restarted it; the activity log is silent on
+> both the stop and the recovery, so **"check the payment method" remains
+> unresolved rather than answered**. Cost per call has come back from ₹72.94 to
+> ₹51.76 but is still above the ₹46.32 of the 23rd, and the twenty-second call
+> is far worse — ₹274.35 against ₹158.55. Today's zero so far is too early to
+> read, but given the history it is worth a look before the afternoon.
 >
 > The September window deliberately stays at **1–22** rather than advancing one
 > account without the other, which would understate the month. Restore access,
