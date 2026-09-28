@@ -340,10 +340,10 @@
 
   <div class="tabs" role="tablist" aria-label="Reporting month">
     <button class="tab" role="tab" id="tab-aug" aria-controls="report" data-month="aug" aria-selected="true">
-      August <span class="t-sub">1&ndash;31</span>
+      August <span class="t-sub"></span>
     </button>
     <button class="tab" role="tab" id="tab-sep" aria-controls="report" data-month="sep" aria-selected="false" tabindex="-1">
-      September <span class="t-sub">1&ndash;16</span>
+      September <span class="t-sub"></span>
     </button>
   </div>
 
@@ -1061,7 +1061,12 @@ function selectMonth(id,focus){
   document.getElementById("report").setAttribute("aria-labelledby","tab-"+id);
   render();
 }
+/* The range under each tab name is read off that month's own day rows. It used to
+   be hand-written in the markup and drifted: the September tab still said 1-16
+   while DAILY_SEP, the note, the totals and the day table had all moved to 1-22. */
 tabs.forEach(t=>{
+  const d=MONTHS[t.dataset.month].daily, sub=t.querySelector(".t-sub");
+  if(d&&d.length&&sub) sub.innerHTML=d[0][0]+"&ndash;"+d[d.length-1][0];
   t.addEventListener("click",()=>selectMonth(t.dataset.month));
   t.addEventListener("keydown",e=>{
     if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft") return;

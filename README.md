@@ -205,6 +205,12 @@ call**. Blending it in reads ₹70.38 and overstates what a call costs — don't
 `[day, a1CallSpend, a1Calls, a1WebSpend, a1WebLeads, a2CallSpend, a2Calls, impressions, reachSum, linkClicks]`
 where `a1` = Pallavi Halcyon, `a2` = Pallavi Kiran. `day` is the day of month.
 
+The range printed under each tab name (*1–31*, *1–22*) is **derived from that
+month's own `DAILY_*` array at load**, not written into the markup. It used to be
+hardcoded and it drifted: the September tab read *1–16* for days while the data,
+the note, the totals and the day table had all moved on to 1–22. Nothing about a
+month's window is hand-written any more.
+
 Everything else a tab shows — headline totals, narrative copy, campaign tables,
 age rows — lives in the `MONTHS` object keyed `aug` / `sep`. **To add a month,
 add a `DAILY_*` array and a `MONTHS` entry, then add one `<button class="tab">`
