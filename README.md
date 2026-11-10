@@ -13,11 +13,12 @@ A single self-contained `index.html` with a **month tab bar** (August /
 September). Figures are baked into the `DAILY_AUG` / `DAILY_SEP` arrays and the
 `MONTHS` object near the bottom of the file — nothing calls the network.
 
-**Scope: two tabs.** August 2026 (1–31, complete) and September 2026 (1–28).
-September stops at the last complete day — Meta keeps revising the most recent
-~48h, and the live part-day moves between calls minutes apart. Showing it would
-read as a collapse in spend that is not real. The range under each tab name is
-read off that month's own `DAILY_*` rows at load, so it cannot drift from them.
+**Scope: four tabs.** August 2026 (1-31), September 2026 (1-30), October 2026 (1-31)
+and November 2026 (1-9). Every tab stops at the last complete day - Meta keeps
+revising the most recent ~48h, and the live part-day moves between calls minutes
+apart. Showing it would read as a collapse in spend that is not real. The range
+under each tab name is read off that month's own `DAILY_*` rows at load, so it
+cannot drift from them.
 
 ## What it shows
 
@@ -36,55 +37,70 @@ read off that month's own `DAILY_*` rows at load, so it cannot drift from them.
 
 ## Snapshot
 
-Frozen **29 Sep 2026, 11:15 am IST**, data window **1–28 September**. The
-six-day hold at the 22nd is over.
+Frozen **10 Nov 2026, 8:15 am IST**. September is closed and two new months are in.
 
-> **The Pallavi Kiran "coverage gap" was an archived campaign.** From 23 Sep the
-> Kiran campaign rows summed to only 33.8% of the account's spend. The missing
-> ₹31,740.53 was in `Halcyon | Calls — 4 Numbers | ABO | 22 Sep`
-> (`120251289083450425`), which ran 23–27 Sep and is now **ARCHIVED**. Archived
-> (and deleted) campaigns are **not returned by an unfiltered campaign listing** —
-> you must filter `effective_status IN [..., "ARCHIVED", "DELETED"]` to see them.
-> With it included, campaign rows equal the account's daily spend and impressions
-> on every day, both accounts, to the paisa.
->
-> **Its calls are derived.** Meta labels it a lead campaign (`results` indicator
-> `actions:lead`, "Not available"), though it is a call campaign. Calls =
-> `spend / cost_per_action_type:click_to_call_native_call_placed` (request the
-> plain `cost_per_action_type` field; the `:subtype` form is rejected). Every day
-> divides to a whole number: 76, 111, 102, 93, 87 = **469 calls**. The same check
-> reproduces `results` exactly on every other call campaign.
->
-> **Structural change on 28 Sep.** Pallavi Kiran spent ₹0 — every campaign on it
-> is paused or archived. On Pallavi Halcyon the old call campaigns are paused and
-> four new per-number call campaigns started (`Halcyon | Call 8585072072 / 7788091092
-> | TS only | All days`, `Halcyon | Call 7272897897 / 9490631010 | TS+AP | All days`),
-> plus a new website-lead campaign `Halcyon | Enquiry LP | Contact-good lead |
-> Mon–Sat 9–5` optimising a **custom conversion** (`offsite_conversion.custom.1564834054962652`)
-> — a fourth distinct lead event, kept out of cost per call.
->
-> Meta revised 21–22 Sep after publication (+₹107.66 in total, calls unchanged).
+| | Aug (1-31) | Sep (1-30) | Oct (1-31) | Nov (1-9) |
+|---|---|---|---|---|
+| Spent | Rs 3,62,046.60 | Rs 3,27,210.50 | Rs 1,68,508.95 | Rs 10,594.70 |
+| Calls placed | 5,144 | 4,539 | 1,834 | 60 |
+| Cost per call | **Rs 59.99** | **Rs 69.07** | **Rs 69.45** | **Rs 87.42** |
+| Lasted 20s+ | 1,448 (28.1%) | 1,328 (29.3%) | 442 (24.1%) | 17 (28.3%) |
+| Lasted 60s+ | 608 (11.8%) | 548 (12.1%) | 172 (9.4%) | 6 (10.0%) |
+| Per 20s call | Rs 213.12 | Rs 236.07 | Rs 288.15 | Rs 308.54 |
+| Per 60s call | Rs 507.57 | Rs 572.08 | Rs 740.49 | Rs 874.20 |
+| Pallavi Halcyon | Rs 2,18,901.90 / 3,063 / Rs 54.02 | Rs 1,15,914.55 / 1,971 / Rs 58.81 | Rs 1,15,623.01 / 1,740 / Rs 66.45 | Rs 5,245.18 / 60 / Rs 87.42 |
+| Pallavi Kiran | Rs 1,43,144.70 / 2,081 / Rs 68.79 | Rs 1,97,583.42 / 2,568 / Rs 76.94 | Rs 11,741.08 / 94 / Rs 124.90 | nothing |
 
-| | August (1–31) | September (1–28) |
-|---|---|---|
-| Spent | ₹3,62,046.60 | ₹3,04,514.33 |
-| Calls placed | 5,144 | 4,256 |
-| Cost per call | **₹59.99** | **₹69.65** |
-| Lasted 20s+ | 1,448 (28.1%) · ₹213.12 | 1,263 (29.7%) · ₹234.69 |
-| Lasted 60s+ | 608 (11.8%) · ₹507.57 | 525 (12.3%) · ₹564.60 |
-| Pallavi Halcyon | ₹2,18,901.90 / 3,063 / ₹54.02 | ₹98,833.40 / 1,688 / ₹58.55 |
-| Pallavi Kiran | ₹1,43,144.70 / 2,081 / ₹68.79 | ₹1,97,583.42 / 2,568 / ₹76.94 |
+(Account rows for Sep/Oct/Nov are **call spend only**; non-call spend - website
+leads and, in November, WhatsApp - sits outside them. August's Pallavi Halcyon row
+is total spend, its cost per call call-only; that inconsistency is in the August
+figures as published.)
 
-(Both September account rows are **call spend only**; the ₹8,097.51 of
-website-lead spend — ₹4,123.35 on 1–3 Sep, ₹3,974.16 on 28 Sep — sits outside
-them. August's Pallavi Halcyon row is total spend, its cost per call call-only —
-that inconsistency is in the August figures as published.)
+### What changed in this refresh
 
-Previous cut (1–22 Sep, published 28 Sep): ₹2,34,692.62 · 3,284 calls · ₹70.21.
+**September closed at Rs 69.07, not Rs 69.65.** The two days that were open at the
+last cut came in, and they were not ordinary days: 29-30 Sep together took
+Rs 22,675 for 283 calls, **Rs 80.12 each**, against Rs 67.52 over the 27 days
+before them. That is the first full read of the post-restructure account.
 
-All figures are **ex-GST** (Meta bills 18% GST on top in India). Unlike
-`o2-reports`, this page does not show a GST-inclusive billed total — if the
-client asks for one, add it, don't silently change the per-call numbers.
+**A campaign was renamed.** What this report published as
+`Halcyon | Call 8585072072 | TS only | All days` now reads
+`Halcyon | Call 094906 31010 | TS only | All days` at Meta. It is the same
+campaign - same 27 calls on 28 Sep, spend revised up Rs 3.98 - but the phone
+number in its name changed. **Worth checking which number the ad actually dials**;
+if the name is now wrong, every per-number comparison on the Oct and Nov tabs is
+mislabelled.
+
+**October's finding is one campaign.** `Halcyon | ABO | Calls | 7788 + 7272 + 9490
+| 600 each` ran nine days and took Rs 19,482.72 for **525 calls at Rs 37.11** -
+more calls than any other line in the month, at roughly half the account average,
+and the cheapest cost per call since `Calls - Age 35+ | FB only | CBO` managed
+Rs 19.60 in early August. It also held callers best (Rs 172.41 per 20-second
+call). **It is paused.** Why it stopped is the first question for the client.
+
+**Pallavi Kiran is finished, at its worst rate.** Rs 11,741.08 for 94 calls in
+October - **Rs 124.90 each** against Rs 76.94 in September - then nothing since
+9 October.
+
+**November brought a third result type.** `Halcyon | ABO | WhatsApp | 6 numbers |
+700 each | Telangana regions` opened on 4 Nov, took Rs 4,160.90 for 56 WhatsApp
+conversations (Rs 74.30 each) and is **the only campaign still ACTIVE on either
+account**. Nothing at all has been spent since 5 November.
+
+## Where WhatsApp spend sits, and why
+
+The `DAILY_*` row format has no slot for a third result type. Rather than invent
+one or drop the spend, November puts the **WhatsApp spend** in the non-call column
+(index 3) so the day rows still equal the account's own daily totals to the paisa,
+and keeps the **56 conversations out of `webLeads`** (index 4), because a WhatsApp
+conversation, a Contact-good lead and a phone call are not one number. The count is
+carried on its own row in `campWeb` with the result type named, which is the same
+mechanism the page already uses to keep four different pixel events apart.
+
+So for November: `webSpend` 5,349.52 = Enquiry LP 1,188.62 + WhatsApp 4,160.90,
+while `webLeads` 13 counts only the Contact-good leads. **If WhatsApp keeps
+running, it deserves its own column** rather than a shared one - that is a
+structural change and a decision for a human.
 
 ## The findings
 
@@ -261,3 +277,18 @@ phone.
   and `\u20B9` in script (via the `RS` constant), dashes are entities/escapes. It
   renders correctly even when served without a charset header. Keep it that way.
 - Update the snapshot date in the masthead and in this README.
+
+## A published August number was wrong, and is corrected here
+
+`MONTHS.aug.impressions` read 2,338,227 and `MONTHS.aug.clicks` read 6,921. Both
+were roughly **one account's** figures while `DAILY_AUG` carried both accounts
+summed. Meta's own account totals for 1-31 Aug settle it - Pallavi Halcyon
+3,054,990 impressions / 22,207 clicks, Pallavi Kiran 1,992,194 / 5,019, together
+**5,047,184 / 27,226** - which is exactly what `DAILY_AUG` sums to. The day rows
+were right and the KPI footnote was wrong, so the footnote is corrected. August's
+money and call counts were never affected and are unchanged.
+
+**The check that catches this** is: for every month, the `DAILY_*` row sums must
+equal `MONTHS[m]` on callSpend, calls, webSpend, webLeads, impressions and clicks,
+and `campCalls` must sum to callSpend, calls, calls20 and calls60. Run it on every
+refresh; it is what found this.
