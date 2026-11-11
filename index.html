@@ -19,6 +19,7 @@
     --s1-wash:      rgba(42,120,214,0.10);
     --s2:           #eb6834;
     --s3:           #1baf7a;
+    --s4:           #7d5bd1;
     --good:         #0ca30c;
     --crit:         #d03b3b;
     --good-ink:     #006300;
@@ -44,6 +45,7 @@
       --s1-wash:      rgba(57,135,229,0.16);
       --s2:           #d95926;
       --s3:           #199e70;
+      --s4:           #9478dd;
       --good:         #0ca30c;
       --crit:         #d03b3b;
       --good-ink:     #0ca30c;
@@ -69,6 +71,7 @@
     --s1-wash:      rgba(57,135,229,0.16);
     --s2:           #d95926;
     --s3:           #199e70;
+    --s4:           #9478dd;
     --good:         #0ca30c;
     --crit:         #d03b3b;
     --good-ink:     #0ca30c;
@@ -329,7 +332,7 @@
     <p class="eyebrow">Meta ads &middot; Phone calls</p>
     <h1>Halcyon Pain Management</h1>
     <p class="prose">Call advertising across both Halcyon ad accounts &mdash; what went out, how many patients dialled,
-      and what each call cost. Figures pulled from Meta on 29 September 2026, 11:15 am IST, and reconciled to the rupee against each
+      and what each call cost. Figures pulled from Meta on 11 November 2026, 8:10 am IST, and reconciled to the rupee against each
       account&rsquo;s own daily totals.</p>
     <div class="sub">
       <span><b>Pallavi Halcyon</b> &nbsp;1999324147481098</span>
@@ -344,6 +347,12 @@
     </button>
     <button class="tab" role="tab" id="tab-sep" aria-controls="report" data-month="sep" aria-selected="false" tabindex="-1">
       September <span class="t-sub"></span>
+    </button>
+    <button class="tab" role="tab" id="tab-oct" aria-controls="report" data-month="oct" aria-selected="false" tabindex="-1">
+      October <span class="t-sub"></span>
+    </button>
+    <button class="tab" role="tab" id="tab-nov" aria-controls="report" data-month="nov" aria-selected="false" tabindex="-1">
+      November <span class="t-sub"></span>
     </button>
   </div>
 
@@ -449,6 +458,27 @@
       </div>
     </section>
 
+    <section id="msg-section" hidden>
+      <div class="section-head">
+        <p class="eyebrow">WhatsApp campaigns</p>
+        <h2 id="msg-title"></h2>
+        <p class="prose" id="msg-intro"></p>
+      </div>
+      <p class="swipe">&larr; swipe the table for the rest &rarr;</p>
+      <div class="t-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Campaign</th><th scope="col">Days live</th><th scope="col">Spent</th>
+              <th scope="col">Result counted</th><th scope="col">Count</th><th scope="col">&#8377; each</th>
+            </tr>
+          </thead>
+          <tbody id="camp-msg"></tbody>
+          <tfoot id="camp-msg-foot"></tfoot>
+        </table>
+      </div>
+    </section>
+
     <section>
       <div class="section-head">
         <p class="eyebrow">Who dialled</p>
@@ -475,7 +505,9 @@
         <p class="eyebrow">Every day</p>
         <h2 id="day-title"></h2>
         <p class="prose">The numbers behind the charts. <em>Calls</em> is Meta&rsquo;s <em>Phone calls placed</em>;
-          <em>&#8377;/call</em> divides that day&rsquo;s call-ad spend only, so the website-lead column never inflates it.</p>
+          <em>&#8377;/call</em> divides that day&rsquo;s call-ad spend only, so neither the website-lead nor the
+          WhatsApp column ever inflates it. <em>WA chats</em> is Meta&rsquo;s <em>messaging conversations started</em>
+          &mdash; a different result again, never added to calls.</p>
       </div>
       <p class="swipe">&larr; swipe the table for the rest &rarr;</p>
       <div class="t-scroll">
@@ -485,6 +517,7 @@
             <tr>
               <th scope="col" id="day-col">Day</th><th scope="col">Call spend</th><th scope="col">Calls</th>
               <th scope="col">&#8377; / call</th><th scope="col">Web spend</th><th scope="col">Site leads</th>
+              <th scope="col">WA spend</th><th scope="col">WA chats</th>
               <th scope="col">Total spend</th><th scope="col">Impressions</th><th scope="col">Reach</th>
               <th scope="col">Clicks</th>
             </tr>
@@ -513,8 +546,13 @@
         <span class="num">click_to_call_native_20s_call_connect</span> (or <span class="num">60s</span>) cost. Every
         division lands exactly on a whole number, which is the check that the derivation is sound. They are derived per
         campaign per period, so they appear in the funnel and the campaign table but not in the day table.</li>
-      <li><b>September stops at the 28th.</b> Meta keeps revising the most recent ~48 hours, so 29 September is a live
-        part-day and is excluded rather than shown as a collapse in spend. It will settle into the next refresh.</li>
+      <li><b>September and October are complete and settled; November stops at the 10th.</b> Meta keeps revising
+        the most recent ~48 hours, so 11 November is a live part-day and is excluded rather than shown as a collapse in
+        spend. It will settle into the next refresh.</li>
+      <li><b>WhatsApp conversations are a fourth result type</b> and are never added to calls or to website leads.
+        From 4 November the Pallavi Halcyon account put most of its budget behind a click-to-WhatsApp campaign; it
+        reports <em>messaging conversations started</em>, which is not a phone call, so it has its own column, its own
+        band in the spend chart and its own table, and its spend stays out of every cost-per-call figure.</li>
       <li><b>Reach</b> in the day tables is summed per day and double-counts people across days; the de-duplicated
         figure for each window is on the Reach tile above.</li>
       <li>A few paise of call spend fall in an <em>Unknown</em> age band and are omitted from the age table only.</li>
@@ -524,9 +562,12 @@
 </div>
 
 <script>
-/* ---- Baked figures. Meta Ads API, pulled 29 Sep 2026, 11:15 am IST. -----
+/* ---- Baked figures. Meta Ads API, pulled 11 Nov 2026, 8:10 am IST. -----
    DAILY row: [day, a1CallSpend, a1Calls, a1WebSpend, a1WebLeads,
-               a2CallSpend, a2Calls, impressions, reachSum, linkClicks]
+               a2CallSpend, a2Calls, impressions, reachSum, linkClicks,
+               a1MsgSpend, a1MsgConversations]
+   The last two are optional and absent on rows with no WhatsApp spend; every reader
+   uses (r[10]||0) / (r[11]||0), so older rows stay valid unchanged.
    a1 = Pallavi Halcyon (1999324147481098), a2 = Pallavi Kiran (694358492762548) */
 
 const DAILY_AUG=[
@@ -589,9 +630,58 @@ const DAILY_SEP=[
 [23,4122.29,89,0,0,7627.51,118,177697,133152,577],
 [24,47.85,10,0,0,7581.83,111,90278,67512,236],
 [25,0,1,0,0,6940.86,102,83881,63941,225],
-[26,6394.43,87,0,0,14280.24,178,269712,213582,815],
-[27,2754.21,53,0,0,11543.13,155,183903,138226,479],
-[28,4447.54,68,3974.16,11,0,0,97809,78316,976]
+[26,6394.43,87,0,0,14280.20,178,269712,213582,815],
+[27,2754.21,53,0,0,11543.10,155,183903,138226,479],
+[28,4465.99,68,3976.85,11,0,0,98102,78435,980],
+[29,9214.92,167,2643.39,21,0,0,154687,111576,802],
+[30,7847.78,116,2968.94,20,0,0,136925,98160,763]
+];
+
+const DAILY_OCT=[
+[1,6734.55,122,2887.21,21,0,0,126032,93724,720],
+[2,7220.47,114,2899.09,31,0,0,127958,100254,813],
+[3,8277.18,138,2716.15,7,0,0,160294,127216,852],
+[4,5270.02,86,0,0,0,0,78543,63399,279],
+[5,5541.28,98,3115.36,15,1254.60,11,129688,103220,692],
+[6,7388.06,125,2632.23,3,2260.52,18,173130,133899,756],
+[7,7069.89,85,1058.61,7,2448.24,21,141485,111203,618],
+[8,6283.29,48,0,0,3120.49,23,119155,92604,367],
+[9,6184.07,88,3264.32,3,2657.23,21,145737,126963,578],
+[10,2816.91,80,3070.58,16,0,0,57584,49348,517],
+[11,3026.47,76,0,0,0,0,37680,31922,186],
+[12,3223.22,68,3225.89,14,0,0,65529,54102,471],
+[13,2677.28,56,2988.61,20,0,0,61125,50636,485],
+[14,2900.87,98,2965.31,2,0,0,70940,58260,520],
+[15,3006.57,81,2983.29,42,0,0,69152,56325,508],
+[16,341.35,19,507.72,8,0,0,10612,9473,73],
+[17,0,1,0,0,0,0,0,0,0],
+[18,0,0,0,0,0,0,0,0,0],
+[19,0,0,0,0,0,0,0,0,0],
+[20,0,0,0,0,0,0,0,0,0],
+[21,0,0,1622.63,0,0,0,13042,12406,106],
+[22,13435.50,136,1256.01,1,0,0,178132,121604,710],
+[23,13206.70,116,787.35,21,0,0,194739,137246,604],
+[24,7259.78,49,569.61,0,0,0,101200,80740,273],
+[25,0,1,0,0,0,0,0,0,0],
+[26,0,0,0,0,0,0,0,0,0],
+[27,0,0,0,0,0,0,0,0,0],
+[28,0,0,0,0,0,0,0,0,0],
+[29,220.72,7,453.92,0,0,0,7528,6733,93],
+[30,1832.15,28,1203.12,0,0,0,35259,26939,274],
+[31,1706.71,20,937.85,15,0,0,31928,26694,221]
+];
+
+const DAILY_NOV=[
+[1,1551.49,23,1130.57,0,0,0,30859,24497,267],
+[2,1548.11,17,58.05,13,0,0,18729,15168,61],
+[3,1606.32,15,0,0,0,0,18388,15244,52],
+[4,539.26,5,0,0,0,0,29795,26445,83,1949.20,26],
+[5,0,0,0,0,0,0,17326,15152,60,2211.70,27],
+[6,0,0,0,0,0,0,0,0,0,0,3],
+[7,0,0,0,0,0,0,0,0,0],
+[8,0,0,0,0,0,0,0,0,0],
+[9,0,0,0,0,0,0,0,0,0],
+[10,0,0,0,0,0,0,0,0,0]
 ];
 
 /* campaign rows: [name, account(1|2), daysLive, spend, callsPlaced, calls20s, calls60s].
@@ -659,49 +749,47 @@ const MONTHS={
   },
 
   sep:{
-    id:"sep", label:"September 2026", short:"Sep", range:"1&ndash;28 Sep 2026", days:28,
-    spend:304514.33, calls:4256, callSpend:296416.82, cpc:69.65,
-    webSpend:8097.51, webLeads:26,
-    impressions:4250522, clicks:13005,
-    reach:[700847,837451], freq:[2.37,3.09],
+    id:"sep", label:"September 2026", short:"Sep", range:"1&ndash;30 Sep 2026", days:30,
+    spend:327210.43, calls:4539, callSpend:313497.90, cpc:69.07,
+    webSpend:13712.53, webLeads:67,
+    impressions:4542427, clicks:14574,
+    reach:[800412,837451], freq:[2.44,3.09],
     daily:DAILY_SEP,
-    partNote:"Twenty-eight days, both accounts, reconciled to the paisa &mdash; the month had been held at the 22nd for six days because the Pallavi Kiran account&rsquo;s campaign rows covered only a third of its spend from the 23rd. <strong>That gap is now explained.</strong> The missing &#8377;31,741 sat in <strong>Halcyon | Calls &mdash; 4 Numbers | ABO | 22 Sep</strong>, a call campaign that was <strong>archived</strong> after the 27th, and archived campaigns drop out of Meta&rsquo;s ordinary campaign list. Pulled directly, it closes the gap: campaign rows now equal the account total on every day of the month. Meta labels it a lead campaign and leaves its results column blank, so its calls are read from Meta&rsquo;s own cost per call placed &mdash; the same method this page uses for 20- and 60-second calls &mdash; and every day divides to a whole number: 469 calls in five days. <strong>Pallavi Kiran spent nothing on the 28th</strong>; every campaign on it is now paused or archived. Pallavi Halcyon was restructured the same day: its old call campaigns paused, four new ones opened, one per clinic number, plus a new Enquiry LP website-lead campaign. 29 September is still in progress and is left out.",
-    chartIntro:"The same three panels over the first twenty-eight days of September. Website-lead spend stops after the 3rd and "+
-      "returns on the 28th with the new Enquiry LP campaign. The dip on the 24th&ndash;25th is Pallavi Halcyon stopping on its own "+
-      "for two days; the 28th is Pallavi Halcyon alone, because Pallavi Kiran spent nothing. Hover any day to read all three at once.",
+    partNote:"The full month, both accounts, reconciled to the paisa on all thirty days. The two days that were missing at the last cut have settled: 29 September came in at &#8377;11,858 for 167 calls (&#8377;55.18, the cheapest day since the 23rd) and the 30th at &#8377;10,817 for 116 (&#8377;67.65). Meta also revised 28 September up by &#8377;21.14 after it was published. That pulls the month to <strong>&#8377;69.07 a call</strong> from the &#8377;69.65 reported for 1&ndash;28. <strong>Pallavi Kiran spent nothing from the 28th onward</strong> and stayed dark; everything after the 27th is Pallavi Halcyon alone, running the four new per-number call campaigns plus the Enquiry LP website-lead campaign.",
+    chartIntro:"Three panels over the whole of September. Website-lead spend stops after the 3rd and returns on the 28th with the Enquiry LP campaign. The dip on the 24th&ndash;25th is Pallavi Halcyon stopping on its own for two days; from the 28th the orange band disappears entirely, because Pallavi Kiran spent nothing for the rest of the month. Hover any day to read all three at once.",
     findingTitle:"September is running at August's expensive rate, not its cheap one",
     phases:[
       {win:"August, whole month", big:"&#8377;59.99", det:"5,144 calls on &#8377;3,08,603 &mdash; 166 calls a day"},
-      {win:"1&ndash;28 September", big:"&#8377;69.65", det:"4,256 calls on &#8377;2,96,417 &mdash; 152 calls a day"}
+      {win:"September, whole month", big:"&#8377;69.07", det:"4,539 calls on &#8377;3,13,498 &mdash; 151 calls a day"}
     ],
     findingBody:
-      "<p class='prose'>Cost per call is <strong>16% above the August average</strong>, and September is tracking "+
-      "August's <em>second half</em> (&#8377;72.36), not its first nine days (&#8377;44.82). The cheap early-August setup "+
-      "has not come back: <strong>Halcyon | Calls &mdash; Age 35+ | FB only | CBO</strong>, which produced calls at "+
-      "&#8377;19.60, spent nothing all month.</p>"+
-      "<p class='prose'>The last six days were a little cheaper than the first three weeks &mdash; &#8377;67.63 a call over "+
-      "23&ndash;28 September against &#8377;70.24 over 1&ndash;22 &mdash; but day to day it is noisy (&#8377;56.76 on the "+
-      "23rd, &#8377;78.02 on the 26th, &#8377;68.74 on the 27th), so read it as a small improvement, not a trend. "+
-      "<strong>ad set level 3 camp</strong> stays the standout of the month at <strong>&#8377;45.77</strong> across 1,102 "+
-      "calls, and the archived <strong>4 Numbers</strong> campaign bought 469 calls at &#8377;67.68 in its five days &mdash; "+
-      "cheaper than the Pallavi Kiran account's main line at &#8377;72.90.</p>"+
-      "<p class='prose'>The gap is still the Pallavi Kiran account: &#8377;76.94 a call against Pallavi Halcyon's "+
-      "&#8377;58.55, on twice the spend (&#8377;1,97,583 against &#8377;98,833). Its two dearest lines, "+
-      "<strong>New Leads Campaign</strong> (&#8377;95.69) and its copy (&#8377;94.47), had both stopped by the 23rd. "+
-      "From the 28th that account is dark, and Pallavi Halcyon's call budget has moved into four per-number campaigns. "+
-      "One day in they read &#8377;65.41 a call across 68 calls, from &#8377;43.29 on 8585072072 to &#8377;377.06 on "+
-      "7788091092 (three calls) &mdash; far too early to judge.</p>",
-    calls20:1263, calls60:525,
+      "<p class='prose'>Cost per call finished <strong>15% above the August average</strong>, tracking August's "+
+      "<em>second half</em> (&#8377;72.36) rather than its first nine days (&#8377;44.82). The cheap early-August "+
+      "setup never came back: <strong>Halcyon | Calls &mdash; Age 35+ | FB only | CBO</strong>, which produced calls "+
+      "at &#8377;19.60, spent nothing all month.</p>"+
+      "<p class='prose'>The last eight days were cheaper than the first three weeks &mdash; &#8377;65.99 a call over "+
+      "23&ndash;30 September against &#8377;70.24 over 1&ndash;22 &mdash; and the two closing days are the reason: "+
+      "&#8377;55.18 on the 29th and &#8377;67.65 on the 30th, both under the month's average, on the restructured "+
+      "per-number campaigns. <strong>ad set level 3 camp</strong> still ends as the month's standout at "+
+      "<strong>&#8377;45.77</strong> across 1,102 calls, and the archived <strong>4 Numbers</strong> campaign bought "+
+      "469 calls at &#8377;67.68 in five days.</p>"+
+      "<p class='prose'>The gap is still the Pallavi Kiran account: <strong>&#8377;76.94</strong> a call against "+
+      "Pallavi Halcyon's <strong>&#8377;58.81</strong>, on nearly twice the spend (&#8377;1,97,583 against "+
+      "&#8377;1,15,915). Kiran's two dearest lines, <strong>New Leads Campaign</strong> (&#8377;95.69) and its copy "+
+      "(&#8377;94.47), had both stopped by the 23rd, and from the 28th the account stopped altogether. The four new "+
+      "per-number campaigns closed the month on three days each: <strong>8585072072</strong> cheapest at "+
+      "&#8377;46.62 across 117 calls, <strong>7788091092</strong> dearest at &#8377;104.71 across 51.</p>",
+    calls20:1328, calls60:548,
     funnelNote:
-      "Across the month 29.7% of calls stayed on the line past 20 seconds (August 28.1%) and 12.3% past a minute "+
-      "(August 11.8%), but the minute-long call costs more: <strong>&#8377;564.60</strong> against August's &#8377;507.57. "+
-      "It has risen at every refresh this month &mdash; &#8377;497, &#8377;503, &#8377;512, &#8377;526, &#8377;543, "+
-      "&#8377;546 and now &#8377;565 &mdash; the one figure on this page with a steady direction.</p>"+
+      "Across the month 29.3% of calls stayed on the line past 20 seconds (August 28.1%) and 12.1% past a minute "+
+      "(August 11.8%). The minute-long call cost <strong>&#8377;572.08</strong> against August's &#8377;507.57 "+
+      "&mdash; dearer again, and the one figure on this page with a steady direction across every cut.</p>"+
       "<p class='prose'>By campaign the split is sharp. The Pallavi Kiran lines hold callers best: <strong>4 Numbers</strong> "+
       "at &#8377;460 a minute-long call, <strong>New Leads Campaign</strong> &#8377;480, <strong>Kiran | Calls &mdash; 3 Numbers "+
       "| ABO</strong> &#8377;484. Pallavi Halcyon's cheap calls are short ones: <strong>ad set level 3 camp</strong> costs "+
-      "&#8377;45.77 a call but &#8377;664 a minute-long call, and <strong>7788- call ads-new</strong> &#8377;1,825. The four new "+
-      "per-number campaigns have one day between them &mdash; too little to read duration from.",
+      "&#8377;45.77 a call but &#8377;664 a minute-long call, and <strong>7788- call ads-new</strong> &#8377;1,825. Among the "+
+      "four new per-number lines, 8585072072 is both the cheapest call and the cheapest 20-second call "+
+      "(&#8377;147) &mdash; the one worth carrying into October.",
     campCalls:[
       ["Kiran | Calls &mdash; 3 Numbers | ABO",2,"1&ndash;27",111387.90,1528,503,230],
       ["ad set level 3 camp",1,"1&ndash;27",50433.08,1102,254,76],
@@ -711,28 +799,176 @@ const MONTHS={
       ["7788- call ads-new",1,"3&ndash;18",14596.84,132,32,8],
       ["New Leads Campaign &ndash; Copy",2,"18&ndash;23",14170.45,150,50,17],
       ["7788- call ads-new &ndash; Copy",1,"18&ndash;26",6952.13,96,28,6],
-      ["Halcyon | Calls &mdash; Core | CBO",1,"1&ndash;3",2428.18,23,6,4],
-      ["Halcyon | Call 8585072072 | TS only | All days",1,"28",1168.72,27,11,2],
-      ["Halcyon | Call 7788091092 | TS only | All days",1,"28",1131.17,3,0,0],
-      ["Halcyon | Call 7272897897 | TS+AP | All days",1,"28",1075.72,14,4,0],
-      ["Halcyon | Call 9490631010 | TS+AP | All days",1,"28",1071.93,20,5,0]
+      ["Halcyon | Call 8585072072 | TS only | All days",1,"28&ndash;30",5455.00,117,37,10],
+      ["Halcyon | Call 7272897897 | TS+AP | All days",1,"28&ndash;30",5386.31,82,19,6],
+      ["Halcyon | Call 9490631010 | TS+AP | All days",1,"28&ndash;30",5347.17,97,17,5],
+      ["Halcyon | Call 7788091092 | TS only | All days",1,"28&ndash;30",5340.21,51,12,4],
+      ["Halcyon | Calls &mdash; Core | CBO",1,"1&ndash;3",2428.18,23,6,4]
     ],
     webTitle:"Website leads: wound down, then restarted",
     webIntro:"Two campaigns spent. LP 7788 ran only until the 3rd. On the 28th a new campaign, Enquiry LP, started "+
       "optimising for a custom conversion (&ldquo;Contact-good lead&rdquo;) &mdash; a different event again, so its count is "+
-      "<strong>not comparable</strong> with the HContacted rows. The last row carries four conversions Meta attributed back to "+
-      "a campaign that spent nothing in the window &mdash; a lagging pixel event from its August run, not new delivery.",
+      "<strong>not comparable</strong> with the HContacted rows. It ran the last three days of the month and took "+
+      "&#8377;9,589 for 52 of them. The last row carries four conversions Meta attributed back to a campaign that spent "+
+      "nothing in the window &mdash; a lagging pixel event from its August run, not new delivery.",
     campWeb:[
+      ["Halcyon | Enquiry LP | Contact-good lead | Mon&ndash;Sat 9&ndash;5","28&ndash;30",9589.18,"Contact-good lead (custom)",52],
       ["Halcyon | LP 7788 | Website Leads","1&ndash;3",4123.35,"HContacted",11],
-      ["Halcyon | Enquiry LP | Contact-good lead | Mon&ndash;Sat 9&ndash;5","28",3974.16,"Contact-good lead (custom)",11],
       ["Halcyon | LP 8585 | Website Leads","&mdash;",0,"HContacted",4]
     ],
-    ageIntro:"Both accounts combined, call campaigns only. September's cheapest calls still come from under 35 &mdash; "+
-      "&#8377;55.56 at 18&ndash;24 and &#8377;62.86 at 25&ndash;34, a reversal of August. The biggest single piece is "+
-      "ad set level 3 camp, whose 608 calls from 25&ndash;34 cost &#8377;39.06 each; the 18&ndash;24 band comes from "+
-      "New Leads Campaign, its copy and the 4 Numbers campaign running broad.",
-    age:[["18&ndash;24",17113.66,308],["25&ndash;34",74299.38,1182],["35&ndash;44",85112.34,1137],
-         ["45&ndash;54",59257.39,791],["55&ndash;64",37112.58,456],["65+",23518.14,381]]
+    ageIntro:"Both accounts combined, call campaigns only. September's cheapest calls still come from the youngest "+
+      "and oldest bands &mdash; &#8377;55.56 at 18&ndash;24 and &#8377;59.84 at 65+ &mdash; while the 35&ndash;64 "+
+      "middle, which takes 60% of the budget, pays &#8377;74&ndash;&#8377;78. The 18&ndash;24 band exists only because "+
+      "New Leads Campaign, its copy and the 4 Numbers campaign ran broad rather than 35+. "+
+      "&#8377;3.55 and one call land in an <em>Unknown</em> band and are left out.",
+    age:[["18&ndash;24",17113.66,308],["25&ndash;34",80554.90,1278],["35&ndash;44",89273.52,1195],
+         ["45&ndash;54",62110.55,836],["55&ndash;64",39429.89,503],["65+",25011.90,418]]
+  },
+
+  oct:{
+    id:"oct", label:"October 2026", short:"Oct", range:"1&ndash;31 Oct 2026", days:31,
+    spend:168508.98, calls:1834, callSpend:127364.12, cpc:69.45,
+    webSpend:41144.86, webLeads:226,
+    impressions:2136472, clicks:10716,
+    reach:[855599,90931], freq:[2.34,1.46],
+    daily:DAILY_OCT,
+    partNote:"A complete, settled month, reconciled to the paisa against both accounts' own daily totals on all thirty-one days. Two things dominate it. <strong>Pallavi Kiran has effectively closed</strong>: it spent &#8377;11,741 across five days (5&ndash;9 October) and nothing after the 9th. And <strong>a quarter of the budget moved to the landing page</strong> &mdash; &#8377;41,145, up from &#8377;13,713 in September. Call spend itself fell from &#8377;3,13,498 to &#8377;1,27,364. Delivery was also interrupted twice: nothing ran on 17&ndash;20 October or 25&ndash;28 October.",
+    chartIntro:"The same three panels over October. The orange Kiran band appears only on the 5th to the 9th and then never again. The green website-lead band is much wider than September's. Two flat stretches &mdash; the 17th to the 20th and the 25th to the 28th &mdash; are days the account served nothing at all. Hover any day to read all three at once.",
+    findingTitle:"Consolidating the per-number campaigns halved the cost of a call",
+    phases:[
+      {win:"1&ndash;9 October, four separate numbers", big:"&#8377;71.85", det:"998 calls on &#8377;71,710 &mdash; 111 calls a day"},
+      {win:"10&ndash;24 October, one ABO campaign", big:"&#8377;66.53", det:"780 calls on &#8377;51,895 &mdash; 52 calls a day"}
+    ],
+    findingBody:
+      "<p class='prose'>The month's clearest result is <strong>Halcyon | ABO | Calls | 7788 + 7272 + 9490 | 600 each</strong>, "+
+      "which started on the 9th and put all three numbers in one campaign on a &#8377;600-per-number budget. It bought "+
+      "<strong>525 calls at &#8377;37.11</strong> &mdash; the cheapest line on either account since August's "+
+      "<strong>Age 35+ | FB only | CBO</strong> at &#8377;19.60, and less than half what the four separate per-number "+
+      "campaigns were paying. Its best days, the 14th and 16th, bought calls at &#8377;29.60 and &#8377;17.97. "+
+      "<strong>This is the thing to keep.</strong></p>"+
+      "<p class='prose'>It is also why the headline barely moved. October finished at <strong>&#8377;69.45</strong> "+
+      "against September's &#8377;69.07, because the cheap consolidation ran for only about a fortnight and the days "+
+      "either side of it were dear: the 22nd to the 24th cost &#8377;98.79, &#8377;113.85 and &#8377;148.16 a call, and "+
+      "the restart on the 29th to the 31st averaged &#8377;59.70 on a tenth of the volume. Pallavi Halcyon paid "+
+      "<strong>&#8377;66.45</strong> a call over the month; Pallavi Kiran, in its five days, paid "+
+      "<strong>&#8377;124.91</strong> &mdash; its new <strong>Calls | ABO | Hyderabad | Ara + Top Performers</strong> "+
+      "campaign is the dearest line of the month at &#8377;126.34.</p>"+
+      "<p class='prose'><strong>One campaign changed what it advertises mid-month, and it got 2.5 times dearer.</strong> "+
+      "The campaign that ran as <em>Halcyon | Call 8585072072 | TS only | All days</em> was renamed to "+
+      "<em>Halcyon | Call 094906 31010 | TS only | All days</em> on 6 October, and at the same moment every ad in it "+
+      "was given a new creative and its ad set was retargeted from Hyderabad +30km to three tight radii. It is the same "+
+      "campaign id, but not the same campaign, so it is <strong>split into two rows</strong> in the table below. Under "+
+      "the old setup it bought 204 calls at <strong>&#8377;40.99</strong>; under the new one, 167 at "+
+      "<strong>&#8377;103.09</strong>. The old setup was the account's cheapest per-number line. Worth putting back.</p>",
+    calls20:442, calls60:172,
+    funnelNote:
+      "24.1% of October's calls stayed on the line past 20 seconds and 9.4% past a minute &mdash; both weaker than "+
+      "September (29.3% and 12.1%), and the minute-long call rose again to <strong>&#8377;740.49</strong> from "+
+      "&#8377;572.08. Some of that is the consolidation campaign's own mix: it has the cheapest placed call on the "+
+      "account (&#8377;37.11) but only 5.3% of its calls reach a minute, so it flatters the headline and drags the "+
+      "duration figures. Judge it on 20-second calls, where it still wins at &#8377;172.</p>"+
+      "<p class='prose'>The repurposed line shows the same story twice over: as <strong>8585072072</strong> it held "+
+      "26.5% of calls past 20 seconds, and as <strong>094906 31010</strong> only 21.0% &mdash; fewer calls, shorter "+
+      "calls, at two and a half times the price.",
+    campCalls:[
+      ["Halcyon | Call 7788091092 | TS only | All days",1,"1&ndash;24",26258.49,277,60,31],
+      ["Halcyon | Call 7272897897 | TS+AP | All days",1,"1&ndash;24",26041.15,269,78,29],
+      ["Halcyon | ABO | Calls | 7788 + 7272 + 9490 | 600 each",1,"9&ndash;24",19482.72,525,113,28],
+      ["Halcyon | Call 094906 31010 | TS only | All days <span class='tag'>renamed 6 Oct</span>",1,"6&ndash;24",17216.73,167,35,19],
+      ["Halcyon | Call 9490631010 | TS+AP | All days",1,"1&ndash;9",14502.32,243,50,23],
+      ["Calls | ABO | Hyderabad | Ara + Top Performers",2,"6&ndash;9",10486.48,83,32,16],
+      ["Halcyon | Call 8585072072 | TS only | All days <span class='tag'>to 5 Oct</span>",1,"1&ndash;5",8362.02,204,54,17],
+      ["Halcyon | Call 7272897897 | TS+AP | Daily 500",1,"29&ndash;31",1265.82,13,3,1],
+      ["Halcyon | Call 094906 31010 | TS only | Daily 500",1,"29&ndash;31",1255.56,19,5,3],
+      ["Halcyon | Call 7788091092 | TS only | Daily 500",1,"29&ndash;31",1238.20,23,5,1],
+      ["Kiran | Calls &mdash; 3 Numbers | ABO",2,"5",1254.60,11,7,4]
+    ],
+    webTitle:"The other &#8377;41,145",
+    webIntro:"Website-lead spend nearly tripled in October and now takes <strong>24% of the whole budget</strong>. "+
+      "Both campaigns optimise for the same custom conversion (&ldquo;Contact-good lead&rdquo;), so for once these two "+
+      "counts are comparable with each other &mdash; but still <strong>not</strong> with a phone call, and this spend "+
+      "stays out of every cost-per-call figure on the page. 226 leads at &#8377;182.06 each.",
+    campWeb:[
+      ["Halcyon | Enquiry LP | Contact-good lead | Mon&ndash;Sat 9&ndash;5","1&ndash;24",38549.97,"Contact-good lead (custom)",211],
+      ["Halcyon | Enquiry LP | Contact-good lead | Daily 1000","29&ndash;31",2594.89,"Contact-good lead (custom)",15]
+    ],
+    ageIntro:"Both accounts combined, call campaigns only. October's spread is flatter than September's: everything "+
+      "from 25&ndash;34 to 55&ndash;64 pays between &#8377;69 and &#8377;74, and <strong>65+ is the cheapest band at "+
+      "&#8377;58.07</strong>. The 18&ndash;24 row is small and dear (&#8377;100.43 on 22 calls) and comes entirely from "+
+      "the Pallavi Kiran <em>Ara + Top Performers</em> campaign running broad. &#8377;0.74 lands in an <em>Unknown</em> "+
+      "band and is left out.",
+    age:[["18&ndash;24",2209.41,22],["25&ndash;34",45638.86,657],["35&ndash;44",32218.64,468],
+         ["45&ndash;54",21945.12,298],["55&ndash;64",15363.67,217],["65+",9987.65,172]]
+  },
+
+  nov:{
+    id:"nov", label:"November 2026", short:"Nov", range:"1&ndash;10 Nov 2026", days:10,
+    spend:10594.70, calls:60, callSpend:5245.18, cpc:87.42,
+    webSpend:1188.62, webLeads:13,
+    msgSpend:4160.90, msgConv:56,
+    impressions:115097, clicks:523,
+    reach:[82250,0], freq:[1.40,0],
+    daily:DAILY_NOV,
+    partNote:"Ten days, and only five of them have any delivery. <strong>The clinic has moved its money to WhatsApp.</strong> On 4 November a click-to-WhatsApp campaign started and took &#8377;4,161 &mdash; 39% of the whole period &mdash; for <strong>56 conversations at &#8377;74.30</strong>. That is a <em>fourth</em> result type on this report, next to phone calls, HContacted/HEnquiry website leads and the Contact-good lead custom conversion, so it has its own column, its own band in the chart and its own table, and it is never added to the call count. Phone calls collapsed to <strong>60 at &#8377;87.42</strong>, the dearest cost per call in any month on this page. <strong>Both accounts have been dark since 6 November</strong> &mdash; nothing served on the 6th to the 10th, and nothing on the 11th either, which is a live part-day and is excluded. Pallavi Kiran has now spent nothing since 9 October.",
+    chartIntro:"Ten days, five of them empty. The purple band is the new click-to-WhatsApp campaign, which from the 4th is almost the whole of the spend; the blue call band disappears after the 4th and the green website-lead band after the 2nd. The flat run from the 6th is the account serving nothing at all. Hover any day to read all three at once.",
+    findingTitle:"Calls are being replaced by WhatsApp, and the calls that remain are the dearest yet",
+    phases:[
+      {win:"1&ndash;3 November, call ads only", big:"&#8377;75.69", det:"55 calls on &#8377;4,706 &mdash; 18 calls a day"},
+      {win:"4&ndash;10 November, mostly WhatsApp", big:"&#8377;107.85", det:"5 calls on &#8377;539 &mdash; then nothing"}
+    ],
+    findingBody:
+      "<p class='prose'>Only three campaigns placed calls, all of them the &ldquo;Daily 500&rdquo; per-number lines "+
+      "that started on 29 October, and all three stopped on the 4th. Together they bought <strong>60 calls at "+
+      "&#8377;87.42</strong> &mdash; against &#8377;69.45 in October and &#8377;69.07 in September. "+
+      "<strong>094906 31010</strong> was the cheapest of the three at &#8377;68.11, <strong>7272897897</strong> the "+
+      "dearest at &#8377;129.61 on 14 calls.</p>"+
+      "<p class='prose'>The new <strong>Halcyon | ABO | WhatsApp | 6 numbers | 700 each | Telangana regions</strong> "+
+      "campaign ran on the 4th and 5th only and reports 56 conversations started at <strong>&#8377;74.30</strong> each. "+
+      "On price alone a WhatsApp conversation is cheaper than a phone call this month, but <strong>they are not the "+
+      "same thing</strong>: Meta counts a conversation when the first message is sent, and this page has no equivalent "+
+      "of the 20- and 60-second duration check that keeps the call numbers honest. Treat the &#8377;74.30 as a starting "+
+      "cost, not as proof that WhatsApp is working better, until the clinic says how many of those chats reached a "+
+      "person.</p>"+
+      "<p class='prose'><strong>The thing to act on is the silence.</strong> Nothing has served on either account since "+
+      "5 November. The Pallavi Halcyon account still shows the WhatsApp campaign ACTIVE, so the stop is not a paused "+
+      "campaign &mdash; check the payment method and the account spending limit before reading anything into these "+
+      "figures. Three late-attributed conversations landed on the 6th against zero spend; nothing since.</p>",
+    calls20:17, calls60:6,
+    funnelNote:
+      "On 60 calls the duration figures are too thin to compare with a full month, and they are shown here only for "+
+      "completeness: 28.3% past 20 seconds and 10.0% past a minute, at <strong>&#8377;308.54</strong> and "+
+      "<strong>&#8377;874.20</strong>. Every one of those 60 calls came from a &ldquo;Daily 500&rdquo; campaign on a "+
+      "&#8377;500-a-day budget over four days.</p>"+
+      "<p class='prose'>The WhatsApp campaign is deliberately <strong>not</strong> in this funnel. Its result is a "+
+      "conversation started, not a call placed, and Meta exposes no duration equivalent for it &mdash; adding it would "+
+      "make both numbers meaningless.",
+    campCalls:[
+      ["Halcyon | Call 7272897897 | TS+AP | Daily 500",1,"1&ndash;4",1814.55,14,6,2],
+      ["Halcyon | Call 7788091092 | TS only | Daily 500",1,"1&ndash;4",1795.88,22,7,2],
+      ["Halcyon | Call 094906 31010 | TS only | Daily 500",1,"1&ndash;4",1634.75,24,4,2]
+    ],
+    webTitle:"Website leads: two days, then stopped",
+    webIntro:"The Enquiry LP campaign ran on the 1st and 2nd only. &#8377;1,189 for 13 Contact-good lead conversions "+
+      "&mdash; &#8377;91.43 each, the cheapest this custom conversion has been (&#8377;182.06 in October, &#8377;184.41 "+
+      "in September). All 13 were attributed to the 2nd, on &#8377;58 of spend that day, which is lagging attribution "+
+      "from the 1st rather than a real &#8377;4.47-a-lead day &mdash; read the two days together.",
+    campWeb:[
+      ["Halcyon | Enquiry LP | Contact-good lead | Daily 1000","1&ndash;2",1188.62,"Contact-good lead (custom)",13]
+    ],
+    msgTitle:"The new &#8377;4,161: click-to-WhatsApp",
+    msgIntro:"A fourth result type, kept on its own. This campaign optimises for <em>messaging conversations "+
+      "started</em> &mdash; Meta counts one when a person sends the first message &mdash; which is neither a phone "+
+      "call nor a website lead. Its spend is excluded from every cost-per-call figure on this page, and its count is "+
+      "never added to the call count. It ran on the 4th and 5th and has served nothing since.",
+    campMsg:[
+      ["Halcyon | ABO | WhatsApp | 6 numbers | 700 each | Telangana regions","4&ndash;5",4160.90,"Conversations started",56]
+    ],
+    ageIntro:"Both accounts combined, call campaigns only &mdash; and on 60 calls these rows are indicative at best. "+
+      "What little there is runs against October: <strong>55&ndash;64 is the cheapest band at &#8377;51.99</strong> and "+
+      "45&ndash;54 the dearest at &#8377;139.23, on six calls. Nothing lands in an <em>Unknown</em> band. The WhatsApp "+
+      "campaign is not in this table.",
+    age:[["25&ndash;34",1933.52,20],["35&ndash;44",1383.66,18],["45&ndash;54",835.38,6],
+         ["55&ndash;64",571.91,11],["65+",520.71,5]]
   }
 };
 
@@ -829,13 +1065,13 @@ function buildCharts(){
   PAD_L=narrow?38:54;
   panels=[];
 
-  const spendMax=niceMax(Math.max(...D.map(r=>r[1]+r[3]+r[5])));
+  const spendMax=niceMax(Math.max(...D.map(r=>r[1]+r[3]+r[5]+(r[10]||0))));
   panels.push(drawPanel(document.getElementById("svg-spend"),{
     width:W,height:narrow?170:210,max:spendMax,
     ticks:[0,spendMax/4,spendMax/2,spendMax*3/4,spendMax],
     fmtTick:t=>t===0?"0":RS+(narrow?kInr(t):inr(t)),
     xLabels:false,
-    draw(svg,g){ D.forEach((r,i)=>stack(svg,g,[[r[1],"var(--s1)"],[r[3],"var(--s3)"],[r[5],"var(--s2)"]],i)); }
+    draw(svg,g){ D.forEach((r,i)=>stack(svg,g,[[r[1],"var(--s1)"],[r[3],"var(--s3)"],[(r[10]||0),"var(--s4)"],[r[5],"var(--s2)"]],i)); }
   }));
 
   const callMax=niceMax(Math.max(...D.map(r=>r[2]+r[6])));
@@ -904,7 +1140,7 @@ function dayFromEvent(e,svg){
 function showTip(i,e){
   panels.forEach(p=>p.bands.forEach((b,k)=>b.setAttribute("opacity",k===i?1:0)));
   if(i<0||!e){ tip.dataset.on="0"; return; }
-  const r=M.daily[i], calls=r[2]+r[6], cs=r[1]+r[5], tot=cs+r[3];
+  const r=M.daily[i], calls=r[2]+r[6], cs=r[1]+r[5], ms=r[10]||0, tot=cs+r[3]+ms;
   const sw=c=>'<span class="swatch" style="background:'+c+'"></span>';
   tip.innerHTML='<div class="t-day">'+r[0]+" "+M.label+'</div><dl>'+
     "<dt>"+sw("var(--s1)")+"Halcyon calls</dt><dd>"+r[2]+"</dd>"+
@@ -914,6 +1150,8 @@ function showTip(i,e){
     "<dt>Cost per call</dt><dd>"+(calls?RS+inr2(cs/calls):"&mdash;")+"</dd>"+
     (r[3]>0?'<div class="t-rule"></div><dt>'+sw("var(--s3)")+"Website leads</dt><dd>"+r[4]+"</dd>"+
       "<dt>Website-lead spend</dt><dd>"+RS+inr(r[3])+"</dd>":"")+
+    (ms>0||(r[11]||0)>0?'<div class="t-rule"></div><dt>'+sw("var(--s4)")+"WhatsApp chats</dt><dd>"+(r[11]||0)+"</dd>"+
+      "<dt>WhatsApp spend</dt><dd>"+RS+inr(ms)+"</dd>":"")+
     '<div class="t-rule"></div>'+
     "<dt>Total spent</dt><dd>"+RS+inr(tot)+"</dd></dl>";
   tip.dataset.on="1";
@@ -975,6 +1213,21 @@ function renderTables(){
 
   document.getElementById("web-title").innerHTML=M.webTitle;
   document.getElementById("web-intro").innerHTML=M.webIntro;
+  const msgSec=document.getElementById("msg-section");
+  if(M.campMsg&&M.campMsg.length){
+    msgSec.hidden=false;
+    document.getElementById("msg-title").innerHTML=M.msgTitle;
+    document.getElementById("msg-intro").innerHTML=M.msgIntro;
+    document.getElementById("camp-msg").innerHTML=M.campMsg.map(c=>
+      "<tr><td>"+c[0]+"</td><td class='num'>"+c[1]+" "+M.short+"</td><td class='num'>"+RS+inr(c[2])+"</td>"+
+      "<td><span class='tag'>"+c[3]+"</span></td><td class='num'>"+(c[4]||"&mdash;")+"</td>"+
+      "<td class='num'>"+(c[4]&&c[2]?RS+inr2(c[2]/c[4]):"&mdash;")+"</td></tr>").join("");
+    document.getElementById("camp-msg-foot").innerHTML=
+      "<tr><td>All WhatsApp campaigns</td><td class='num'>&mdash;</td><td class='num'>"+RS+inr(M.msgSpend)+
+      "</td><td class='num'>conversations</td><td class='num'>"+M.msgConv+"</td><td class='num'>"+
+      (M.msgConv?RS+inr2(M.msgSpend/M.msgConv):"&mdash;")+"</td></tr>";
+  } else { msgSec.hidden=true; }
+
   document.getElementById("camp-web").innerHTML=M.campWeb.map(c=>
     "<tr><td><span class='cname'><span class='dot' style='background:var(--s3)'></span><span>"+c[0]+"</span></span></td>"+
     "<td class='num'>"+c[1]+(c[1]==="&mdash;"?"":" "+M.short)+"</td><td class='num'>"+(c[2]?RS+inr(c[2]):RS+"0")+"</td>"+
@@ -1004,20 +1257,24 @@ function renderTables(){
 
   document.getElementById("day-title").innerHTML="Every day of "+M.label.split(" ")[0]+", both accounts";
   document.getElementById("day-col").textContent=M.short;
-  const T=[0,0,0,0,0,0,0,0];
+  const T=[0,0,0,0,0,0,0,0,0,0];
   document.getElementById("day-rows").innerHTML=M.daily.map(r=>{
-    const cs=r[1]+r[5], calls=r[2]+r[6], tot=cs+r[3];
+    const cs=r[1]+r[5], calls=r[2]+r[6], ms=r[10]||0, mc=r[11]||0, tot=cs+r[3]+ms;
     T[0]+=cs; T[1]+=calls; T[2]+=r[3]; T[3]+=r[4]; T[4]+=tot; T[5]+=r[7]; T[6]+=r[8]; T[7]+=r[9];
+    T[8]+=ms; T[9]+=mc;
     return "<tr><td class='num'>"+r[0]+"</td><td class='num'>"+RS+inr2(cs)+"</td><td class='num'>"+calls+"</td>"+
       "<td class='num'>"+(calls?RS+inr2(cs/calls):"&mdash;")+"</td>"+
       "<td class='num'>"+(r[3]?RS+inr2(r[3]):"&mdash;")+"</td><td class='num'>"+(r[4]||"&mdash;")+"</td>"+
+      "<td class='num'>"+(ms?RS+inr2(ms):"&mdash;")+"</td><td class='num'>"+(mc||"&mdash;")+"</td>"+
       "<td class='num'>"+RS+inr2(tot)+"</td><td class='num'>"+inr(r[7])+"</td>"+
       "<td class='num'>"+inr(r[8])+"</td><td class='num'>"+inr(r[9])+"</td></tr>";
   }).join("");
   document.getElementById("day-foot").innerHTML=
     "<tr><td>"+M.short+"</td><td class='num'>"+RS+inr2(T[0])+"</td><td class='num'>"+inr(T[1])+"</td>"+
-    "<td class='num'>"+RS+inr2(T[0]/T[1])+"</td><td class='num'>"+RS+inr2(T[2])+"</td>"+
-    "<td class='num'>"+inr(T[3])+"</td><td class='num'>"+RS+inr2(T[4])+"</td><td class='num'>"+inr(T[5])+"</td>"+
+    "<td class='num'>"+(T[1]?RS+inr2(T[0]/T[1]):"&mdash;")+"</td><td class='num'>"+RS+inr2(T[2])+"</td>"+
+    "<td class='num'>"+inr(T[3])+"</td>"+
+    "<td class='num'>"+(T[8]?RS+inr2(T[8]):"&mdash;")+"</td><td class='num'>"+(T[9]||"&mdash;")+"</td>"+
+    "<td class='num'>"+RS+inr2(T[4])+"</td><td class='num'>"+inr(T[5])+"</td>"+
     "<td class='num'>"+inr(T[6])+"</td><td class='num'>"+inr(T[7])+"</td></tr>";
 }
 
@@ -1051,6 +1308,7 @@ function renderNarrative(){
   document.getElementById("legend").innerHTML=
     '<span class="legend-item"><span class="swatch" style="background:var(--s1)"></span>Pallavi Halcyon &mdash; call ads</span>'+
     (M.webSpend>0?'<span class="legend-item"><span class="swatch" style="background:var(--s3)"></span>Pallavi Halcyon &mdash; website leads</span>':"")+
+    ((M.msgSpend||0)>0?'<span class="legend-item"><span class="swatch" style="background:var(--s4)"></span>Pallavi Halcyon &mdash; WhatsApp</span>':"")+
     '<span class="legend-item"><span class="swatch" style="background:var(--s2)"></span>Pallavi Kiran &mdash; call ads</span>';
 }
 
