@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<style>*,*::before,*::after{box-sizing:border-box}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Halcyon November Enquiries</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one reading column, AP and TG always side by side (teal vs violet), summary first, raw rows last */
+:root{
+  --bg:#F4F7F7; --panel:#FFFFFF; --fg:#14211F; --muted:#5B6B69; --line:#DCE5E4;
+  --ap:#0E8A8C; --ap-soft:#D6EEEE; --tg:#7348B0; --tg-soft:#E8DFF5;
+  --new:#9AA8A6; --att:#E0A43A; --con:#3E8ED0; --qua:#2E9E62; --boo:#14663F; --junk:#C9524A; --lost:#8E6B66;
+  --f-head:"Manrope",system-ui,sans-serif; --f-body:"Inter",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1716; --panel:#172221; --fg:#E6EEED; --muted:#93A4A2; --line:#283735;
+  --ap:#3CC2C4; --ap-soft:#173B3C; --tg:#AE8BE6; --tg-soft:#2C2342;
+  --new:#7B8987; --att:#E8B556; --con:#62A9E6; --qua:#4CC283; --boo:#7DDCA8; --junk:#E57A72; --lost:#B1928D; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1716; --panel:#172221; --fg:#E6EEED; --muted:#93A4A2; --line:#283735;
+  --ap:#3CC2C4; --ap-soft:#173B3C; --tg:#AE8BE6; --tg-soft:#2C2342;
+  --new:#7B8987; --att:#E8B556; --con:#62A9E6; --qua:#4CC283; --boo:#7DDCA8; --junk:#E57A72; --lost:#B1928D; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
+h1,h2,h3{font-family:var(--f-head);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(26px,4vw,38px);font-weight:800}
+h2{font-size:20px;font-weight:800}
+h3{font-size:15px;font-weight:700}
+p{margin:0}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+header{display:grid;gap:10px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+.seg button{font:inherit;font-size:13px;border:0;background:none;color:var(--fg);padding:7px 12px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.seg button:focus-visible,select:focus-visible{outline:2px solid var(--con);outline-offset:2px}
+section{display:grid;gap:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.two>*{min-width:0}
+@media (max-width:720px){.two{grid-template-columns:1fr}}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:2px}
+.kpi b{font-family:var(--f-head);font-size:28px;font-weight:800;font-variant-numeric:tabular-nums}
+.kpi span{font-size:13px;color:var(--muted)}
+.state-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px}
+.chip.ap{background:var(--ap-soft);color:var(--ap)}
+.chip.tg{background:var(--tg-soft);color:var(--tg)}
+.dot{width:9px;height:9px;border-radius:2px;display:inline-block}
+.stack{display:flex;height:26px;border-radius:6px;overflow:hidden;background:var(--line)}
+.stack div{height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+.bars{display:grid;gap:7px}
+.bar-row{display:grid;grid-template-columns:minmax(90px,150px) 1fr 34px;gap:10px;align-items:center;font-size:13.5px}
+.bar-row .track{height:14px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar-row .fill{height:100%;border-radius:4px}
+.bar-row .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.findings{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.findings li{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
+.sev{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:5px;white-space:nowrap}
+.sev.act{background:color-mix(in srgb,var(--junk) 18%,transparent);color:var(--junk)}
+.sev.watch{background:color-mix(in srgb,var(--att) 22%,transparent);color:var(--att)}
+.sev.good{background:color-mix(in srgb,var(--qua) 18%,transparent);color:var(--qua)}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;border-radius:999px;color:#fff}
+svg text{fill:var(--muted);font-family:var(--f-body);font-size:11px}
+.foot{font-size:12.5px;color:var(--muted);display:grid;gap:4px}
+select{font:inherit;font-size:13px;padding:6px 8px;border-radius:7px;border:1px solid var(--line);background:var(--panel);color:var(--fg)}
+.flag{font-size:11px;color:var(--muted);font-family:var(--f-mono)}
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Halcyon Pain Management · Website enquiries · 1–23 Nov 2026</p>
+    <h1>Andhra Pradesh vs Telangana: who enquired and how far they got</h1>
+    <p class="muted" style="max-width:68ch">From the CRM sheet “Halcyon new v2”, pulled 23 Nov 2026. Every lead came through the /enquiry/ form. The state comes only from the area each patient typed into the form, not from the ad targeting. A few areas were unclear or outside AP and Telangana, and those are counted separately.</p>
+  </header>
+
+  <section>
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <section>
+    <h2>Findings</h2>
+    <div class="panel"><ul class="findings" id="findings"></ul></div>
+  </section>
+
+  <section>
+    <h2>Stages by state</h2>
+    <div class="two" id="stage-cards"></div>
+    <div class="legend" id="stage-legend"></div>
+  </section>
+
+  <section>
+    <h2>AP vs TG side by side</h2>
+    <div class="panel scroll"><table id="cmp"></table></div>
+
+  </section>
+
+  <section>
+    <h2>Enquiries per day</h2>
+    <div class="panel scroll"><div id="daily"></div></div>
+  </section>
+
+  <section>
+    <h2>Day-wise report: AP and Telangana by stage</h2>
+    <p class="muted" style="font-size:13px">One row per day the enquiry came in. Each cell shows how many of that day's leads are in each stage today. Reached = Contacted + Qualified + Booked.</p>
+    <div class="panel scroll"><table id="daywise" style="min-width:900px"></table></div>
+  </section>
+
+  <section>
+    <h2>Pain type</h2>
+    <div class="two" id="pain"></div>
+  </section>
+
+  <section>
+    <h2>How long they have had the pain</h2>
+    <div class="two" id="since"></div>
+  </section>
+
+  <section>
+    <h2>Top areas</h2>
+    <div class="two" id="areas"></div>
+  </section>
+
+  <section>
+    <div class="state-head">
+      <h2>Every lead</h2>
+      <div class="toolbar">
+        <label for="f-state" class="muted" style="font-size:13px">Show</label>
+        <select id="f-state"><option value="all">All</option><option value="AP">Andhra Pradesh</option><option value="TG">Telangana</option><option value="rest">Other / unknown</option></select>
+        <label for="f-stage" class="muted" style="font-size:13px">Stage</label>
+        <select id="f-stage"><option value="all">All</option></select>
+      </div>
+    </div>
+    <div class="panel scroll"><table id="rows"></table></div>
+    <p class="muted" style="font-size:13px">Names and phone numbers are left out on purpose. Where a <span class="flag">repeat</span> tag shows, the same phone number filled the form more than once.</p>
+  </section>
+
+  <div class="foot">
+    <p>Stage meanings, as the CRM uses them: New = no call yet · Attempted = called, no answer · Contacted = spoke to them · Qualified = a fit, wants treatment · Booked = appointment fixed · Junk = fake or irrelevant · Lost = not interested.</p>
+    <p>“Time to first touch” is the time between the form being filled and the first stage change being logged in the Activity tab.</p>
+  </div>
+</div>
+
+<script>
+const D = [{"t": "2026-11-01 00:43", "day": "2026-11-01", "adset": "None", "state": "TG", "area": "Chengicherla", "pain": "Knee", "since": "More than a year", "status": "Attempted", "plat": "Instagram", "resp": 33.6, "dup": false}, {"t": "2026-11-01 08:32", "day": "2026-11-01", "adset": "Old", "state": "AP", "area": "Proddutur in kadapa district", "pain": "Knee", "since": "A few weeks", "status": "Contacted", "plat": "Instagram", "resp": 25.8, "dup": false}, {"t": "2026-11-01 10:05", "day": "2026-11-01", "adset": "Old", "state": "TG", "area": "Kukatpally", "pain": "Knee", "since": "More than a year", "status": "Attempted", "plat": "Instagram", "resp": 24.3, "dup": false}, {"t": "2026-11-01 12:59", "day": "2026-11-01", "adset": "Old", "state": "TG", "area": "Miyapur", "pain": "Knee", "since": "More than a year", "status": "Contacted", "plat": "Instagram", "resp": 21.4, "dup": false}, {"t": "2026-11-01 13:28", "day": "2026-11-01", "adset": "Old", "state": "TG", "area": "Dilsukhnagar", "pain": "Somewhere else", "since": "More than a year", "status": "Contacted", "plat": "Facebook", "resp": 20.9, "dup": false}, {"t": "2026-11-01 13:34", "day": "2026-11-01", "adset": "Old", "state": "AP", "area": "Sullurpeta", "pain": "Knee", "since": "More than a year", "status": "Attempted", "plat": "Instagram", "resp": 20.8, "dup": false}, {"t": "2026-11-01 14:15", "day": "2026-11-01", "adset": "Old", "state": "TG", "area": "Kondapur", "pain": "Knee", "since": "A few months", "status": "Attempted", "plat": "Instagram", "resp": 20.1, "dup": false}, {"t": "2026-11-01 16:33", "day": "2026-11-01", "adset": "Old", "state": "AP", "area": "Rajahmundry", "pain": "Knee", "since": "More than a year", "status": "Contacted", "plat": "Instagram", "resp": 17.8, "dup": false}, {"t": "2026-11-01 17:35", "day": "2026-11-01", "adset": "Old", "state": "TG", "area": "Gajularamaram", "pain": "Shoulder", "since": "More than a year", "status": "Attempted", "plat": "Instagram", "resp": 16.8, "dup": false}, {"t": "2026-11-01 17:39", "day": "2026-11-01", "adset": "Old", "state": "AP", "area": "Koilakuntla", "pain": "Lower back", "since": "More than a year", "status": "Attempted", "plat": "Instagram", "resp": 16.7, "dup": false}, {"t": "2026-11-01 18:15", "day": "2026-11-01", "adset": "Old", "state": "TG", "area": "Vikarabad", "pain": "Knee", "since": "More than a year", "status": "Contacted", "plat": "Facebook", "resp": 16.1, "dup": false}, {"t": "2026-11-01 18:57", "day": "2026-11-01", "adset": "Old", "state": "AP", "area": "Dharmavaram", "pain": "Lower back", "since": "A few weeks", "status": "Attempted", "plat": "Facebook", "resp": 15.4, "dup": true}, {"t": "2026-11-01 18:58", "day": "2026-11-01", "adset": "Old", "state": "AP", "area": "Dharmavaram", "pain": "Lower back", "since": "A few weeks", "status": "Attempted", "plat": "Facebook", "resp": 15.4, "dup": true}, {"t": "2026-11-01 19:35", "day": "2026-11-01", "adset": "Old", "state": "AP", "area": "anakapalli", "pain": "Knee", "since": "More than a year", "status": "Contacted", "plat": "Facebook", "resp": 14.8, "dup": true}, {"t": "2026-11-01 19:35", "day": "2026-11-01", "adset": "Old", "state": "AP", "area": "anakapalli", "pain": "Knee", "since": "More than a year", "status": "Attempted", "plat": "Facebook", "resp": 14.8, "dup": true}, {"t": "2026-11-01 20:10", "day": "2026-11-01", "adset": "Old", "state": "AP", "area": "Vinukonda", "pain": "Knee", "since": "A few weeks", "status": "Attempted", "plat": "Facebook", "resp": 14.2, "dup": false}, {"t": "2026-11-01 20:11", "day": "2026-11-01", "adset": "Old", "state": "TG", "area": "Kamareddy", "pain": "Knee", "since": "A few weeks", "status": "Attempted", "plat": "Facebook", "resp": 14.2, "dup": false}, {"t": "2026-11-01 20:24", "day": "2026-11-01", "adset": "Old", "state": "TG", "area": "Karimnagar", "pain": "Not given", "since": "Not given", "status": "Contacted", "plat": "Instagram", "resp": 13.9, "dup": false}, {"t": "2026-11-01 20:34", "day": "2026-11-01", "adset": "Old", "state": "TG", "area": "Kamalapur", "pain": "Knee", "since": "A few weeks", "status": "Attempted", "plat": "Instagram", "resp": 13.8, "dup": false}, {"t": "2026-11-01 20:34", "day": "2026-11-01", "adset": "Old", "state": "TG", "area": "Hyderabad", "pain": "Shoulder", "since": "More than a year", "status": "Attempted", "plat": "Facebook", "resp": 13.8, "dup": false}, {"t": "2026-11-01 23:45", "day": "2026-11-01", "adset": "Old", "state": "TG", "area": "Hyderabad", "pain": "Knee", "since": "More than a year", "status": "Contacted", "plat": "Instagram", "resp": 10.6, "dup": false}, {"t": "2026-11-02 04:46", "day": "2026-11-02", "adset": "Old", "state": "TG", "area": "Khammam", "pain": "Lower back", "since": "More than a year", "status": "Attempted", "plat": "Instagram", "resp": 5.6, "dup": false}, {"t": "2026-11-18 14:46", "day": "2026-11-18", "adset": "TG", "state": "TG", "area": "Nirmal Khanapur", "pain": "Lower back", "since": "More than a year", "status": "Contacted", "plat": "Instagram", "resp": 1.4, "dup": false}, {"t": "2026-11-18 15:53", "day": "2026-11-18", "adset": "TG", "state": "TG", "area": "Aramghar", "pain": "Knee", "since": "A few months", "status": "Attempted", "plat": "Unknown", "resp": 0.3, "dup": false}, {"t": "2026-11-18 16:02", "day": "2026-11-18", "adset": "TG", "state": "TG", "area": "Nagarkunool", "pain": "Lower back", "since": "More than a year", "status": "Contacted", "plat": "Instagram", "resp": 0.1, "dup": false}, {"t": "2026-11-18 16:50", "day": "2026-11-18", "adset": "TG", "state": "TG", "area": "Sangareddy", "pain": "Not given", "since": "Not given", "status": "Attempted", "plat": "Instagram", "resp": 19.6, "dup": false}, {"t": "2026-11-18 17:45", "day": "2026-11-18", "adset": "TG", "state": "TG", "area": "Medak", "pain": "Knee", "since": "More than a year", "status": "Attempted", "plat": "Unknown", "resp": 18.8, "dup": false}, {"t": "2026-11-18 17:46", "day": "2026-11-18", "adset": "TG", "state": "TG", "area": "Nizampet", "pain": "Not given", "since": "Not given", "status": "Attempted", "plat": "Unknown", "resp": 19.9, "dup": false}, {"t": "2026-11-18 17:58", "day": "2026-11-18", "adset": "TG", "state": "TG", "area": "Khammam", "pain": "Leg or nerve pain", "since": "Not given", "status": "Attempted", "plat": "Unknown", "resp": 18.6, "dup": false}, {"t": "2026-11-18 18:15", "day": "2026-11-18", "adset": "TG", "state": "TG", "area": "Jogulamba Gadwal", "pain": "Lower back", "since": "More than a year", "status": "Qualified", "plat": "Unknown", "resp": 19.0, "dup": false}, {"t": "2026-11-18 18:24", "day": "2026-11-18", "adset": "AP", "state": "AP", "area": "Rajahmundry ap", "pain": "Shoulder", "since": "A few months", "status": "Junk", "plat": "Instagram", "resp": 18.8, "dup": true}, {"t": "2026-11-18 19:11", "day": "2026-11-18", "adset": "TG", "state": "AP", "area": "Kolluru", "pain": "Shoulder", "since": "A few months", "status": "Contacted", "plat": "Unknown", "resp": 18.1, "dup": false}, {"t": "2026-11-18 19:55", "day": "2026-11-18", "adset": "AP", "state": "AP", "area": "Ongole", "pain": "Lower back", "since": "More than a year", "status": "Contacted", "plat": "Instagram", "resp": 17.4, "dup": false}, {"t": "2026-11-18 19:59", "day": "2026-11-18", "adset": "AP", "state": "TG", "area": "Pragati nagar", "pain": "Shoulder", "since": "A few months", "status": "Contacted", "plat": "Facebook", "resp": 17.4, "dup": true}, {"t": "2026-11-18 20:25", "day": "2026-11-18", "adset": "TG", "state": "AP", "area": "Vijayawada", "pain": "Leg or nerve pain", "since": "More than a year", "status": "Junk", "plat": "Instagram", "resp": 17.0, "dup": false}, {"t": "2026-11-18 21:29", "day": "2026-11-18", "adset": "AP", "state": "AP", "area": "Vizag", "pain": "Lower back", "since": "More than a year", "status": "Attempted", "plat": "Unknown", "resp": 15.9, "dup": false}, {"t": "2026-11-18 21:41", "day": "2026-11-18", "adset": "TG", "state": "AP", "area": "AP", "pain": "Lower back", "since": "More than a year", "status": "Contacted", "plat": "Facebook", "resp": 15.8, "dup": false}, {"t": "2026-11-19 00:22", "day": "2026-11-19", "adset": "TG", "state": "TG", "area": "Lb nagar", "pain": "Lower back", "since": "A few weeks", "status": "Attempted", "plat": "Facebook", "resp": 13.2, "dup": false}, {"t": "2026-11-19 05:23", "day": "2026-11-19", "adset": "TG", "state": "TG", "area": "Hanamakonda", "pain": "Knee", "since": "A few months", "status": "Attempted", "plat": "Unknown", "resp": 8.1, "dup": false}, {"t": "2026-11-19 07:15", "day": "2026-11-19", "adset": "AP", "state": "AP", "area": "Guntur", "pain": "Lower back", "since": "A few months", "status": "Contacted", "plat": "Facebook", "resp": 6.3, "dup": false}, {"t": "2026-11-19 07:36", "day": "2026-11-19", "adset": "TG", "state": "TG", "area": "Vikarabad", "pain": "Knee", "since": "More than a year", "status": "Junk", "plat": "Unknown", "resp": 6.0, "dup": false}, {"t": "2026-11-19 07:53", "day": "2026-11-19", "adset": "TG", "state": "AP", "area": "Narsipatnam", "pain": "Lower back", "since": "A few months", "status": "Attempted", "plat": "Unknown", "resp": 5.7, "dup": false}, {"t": "2026-11-19 07:55", "day": "2026-11-19", "adset": "AP", "state": "AP", "area": "Vijayawada", "pain": "Knee", "since": "More than a year", "status": "Attempted", "plat": "Unknown", "resp": 5.8, "dup": false}, {"t": "2026-11-19 08:28", "day": "2026-11-19", "adset": "TG", "state": "TG", "area": "Kamareddy", "pain": "Lower back", "since": "More than a year", "status": "Contacted", "plat": "Unknown", "resp": 5.3, "dup": false}, {"t": "2026-11-19 09:03", "day": "2026-11-19", "adset": "AP", "state": "TG", "area": "Madhapur", "pain": "Knee", "since": "A few months", "status": "Attempted", "plat": "Instagram", "resp": 4.7, "dup": false}, {"t": "2026-11-19 10:51", "day": "2026-11-19", "adset": "AP", "state": "AP", "area": "Rajahmundry", "pain": "Lower back", "since": "A few weeks", "status": "Contacted", "plat": "Instagram", "resp": 2.9, "dup": false}, {"t": "2026-11-19 11:07", "day": "2026-11-19", "adset": "AP", "state": "TG", "area": "Pragati nagar", "pain": "Shoulder", "since": "A few months", "status": "Attempted", "plat": "Facebook", "resp": 2.7, "dup": true}, {"t": "2026-11-19 11:24", "day": "2026-11-19", "adset": "TG", "state": "TG", "area": "Secunderabad", "pain": "Lower back", "since": "More than a year", "status": "Attempted", "plat": "Unknown", "resp": 2.4, "dup": false}, {"t": "2026-11-19 12:16", "day": "2026-11-19", "adset": "AP", "state": "AP", "area": "Andhrapradesh", "pain": "Leg or nerve pain", "since": "A few weeks", "status": "Junk", "plat": "Unknown", "resp": 1.6, "dup": false}, {"t": "2026-11-19 14:22", "day": "2026-11-19", "adset": "TG", "state": "TG", "area": "Kukatpally", "pain": "Lower back", "since": "A few months", "status": "Contacted", "plat": "Facebook", "resp": 1.6, "dup": false}, {"t": "2026-11-19 14:46", "day": "2026-11-19", "adset": "TG", "state": "TG", "area": "Karimnagar", "pain": "Shoulder", "since": "A few months", "status": "Contacted", "plat": "Unknown", "resp": 1.2, "dup": false}, {"t": "2026-11-19 14:56", "day": "2026-11-19", "adset": "TG", "state": "AP", "area": "Ongole", "pain": "Knee", "since": "More than a year", "status": "Attempted", "plat": "Instagram", "resp": 1.1, "dup": true}, {"t": "2026-11-19 14:59", "day": "2026-11-19", "adset": "AP", "state": "AP", "area": "Guntur", "pain": "Leg or nerve pain", "since": "More than a year", "status": "Contacted", "plat": "Instagram", "resp": 1.0, "dup": false}, {"t": "2026-11-19 15:13", "day": "2026-11-19", "adset": "AP", "state": "AP", "area": "Kodumur, kurnool (dt)", "pain": "Lower back", "since": "A few months", "status": "Contacted", "plat": "Facebook", "resp": 0.8, "dup": true}, {"t": "2026-11-19 15:15", "day": "2026-11-19", "adset": "AP", "state": "AP", "area": "Kodumur, kurnool (dt)", "pain": "Not given", "since": "Not given", "status": "Contacted", "plat": "Facebook", "resp": 0.8, "dup": true}, {"t": "2026-11-19 18:17", "day": "2026-11-19", "adset": "TG", "state": "AP", "area": "Anantapur", "pain": "Knee", "since": "A few months", "status": "Contacted", "plat": "Facebook", "resp": 16.6, "dup": false}, {"t": "2026-11-19 19:39", "day": "2026-11-19", "adset": "AP", "state": "AP", "area": "Nandyal", "pain": "Knee", "since": "A few months", "status": "Contacted", "plat": "Unknown", "resp": 15.2, "dup": false}, {"t": "2026-11-19 20:21", "day": "2026-11-19", "adset": "TG", "state": "TG", "area": "Suchitra", "pain": "Knee", "since": "More than a year", "status": "Attempted", "plat": "Unknown", "resp": 14.5, "dup": false}, {"t": "2026-11-19 20:55", "day": "2026-11-19", "adset": "AP", "state": "AP", "area": "Rajahmundry", "pain": "Shoulder", "since": "A few months", "status": "Attempted", "plat": "Facebook", "resp": 14.0, "dup": true}, {"t": "2026-11-19 21:43", "day": "2026-11-19", "adset": "TG", "state": "Other", "area": "Ranchi", "pain": "Lower back", "since": "More than a year", "status": "Contacted", "plat": "Instagram", "resp": 13.8, "dup": false}, {"t": "2026-11-19 22:57", "day": "2026-11-19", "adset": "TG", "state": "TG", "area": "Warangal", "pain": "Lower back", "since": "More than a year", "status": "Contacted", "plat": "Facebook", "resp": 12.1, "dup": false}, {"t": "2026-11-19 23:27", "day": "2026-11-19", "adset": "TG", "state": "TG", "area": "Khammam", "pain": "Knee", "since": "More than a year", "status": "Attempted", "plat": "Unknown", "resp": 11.6, "dup": false}, {"t": "2026-11-19 23:31", "day": "2026-11-19", "adset": "AP", "state": "AP", "area": "Narsaipatnam", "pain": "Leg or nerve pain", "since": "Less than a week", "status": "Lost", "plat": "Unknown", "resp": 12.0, "dup": false}, {"t": "2026-11-20 00:31", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "Hyderabad", "pain": "Neck", "since": "Less than a week", "status": "Attempted", "plat": "Instagram", "resp": 11.0, "dup": false}, {"t": "2026-11-20 01:20", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "Hyderabad", "pain": "Knee", "since": "More than a year", "status": "Contacted", "plat": "Instagram", "resp": 10.2, "dup": false}, {"t": "2026-11-20 05:01", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "Jangaon", "pain": "Lower back", "since": "Less than a week", "status": "Junk", "plat": "Unknown", "resp": 6.6, "dup": false}, {"t": "2026-11-20 06:33", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "రాంనగర్", "pain": "Shoulder", "since": "More than a year", "status": "Attempted", "plat": "Facebook", "resp": 5.0, "dup": true}, {"t": "2026-11-20 06:34", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "రాంనగర్", "pain": "Not given", "since": "Not given", "status": "Attempted", "plat": "Facebook", "resp": 5.0, "dup": true}, {"t": "2026-11-20 07:49", "day": "2026-11-20", "adset": "AP", "state": "AP", "area": "Chirala", "pain": "Lower back", "since": "Not given", "status": "Attempted", "plat": "Unknown", "resp": 3.7, "dup": false}, {"t": "2026-11-20 08:00", "day": "2026-11-20", "adset": "AP", "state": "TG", "area": "Balanagar", "pain": "Neck", "since": "Not given", "status": "Attempted", "plat": "Instagram", "resp": 3.6, "dup": false}, {"t": "2026-11-20 09:15", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "Warangal", "pain": "Knee", "since": "More than a year", "status": "Contacted", "plat": "Unknown", "resp": 2.3, "dup": false}, {"t": "2026-11-20 09:18", "day": "2026-11-20", "adset": "AP", "state": "TG", "area": "Madhapur", "pain": "Shoulder", "since": "A few weeks", "status": "Attempted", "plat": "Instagram", "resp": 2.3, "dup": false}, {"t": "2026-11-20 09:43", "day": "2026-11-20", "adset": "AP", "state": "TG", "area": "Mugachintla", "pain": "Shoulder", "since": "More than a year", "status": "Qualified", "plat": "Facebook", "resp": 1.9, "dup": true}, {"t": "2026-11-20 10:11", "day": "2026-11-20", "adset": "AP", "state": "AP", "area": "RAJAHMUNDRY", "pain": "Knee", "since": "A few months", "status": "Attempted", "plat": "Unknown", "resp": 1.4, "dup": false}, {"t": "2026-11-20 10:14", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "Boduppal", "pain": "Knee", "since": "A few months", "status": "Contacted", "plat": "Unknown", "resp": 1.4, "dup": false}, {"t": "2026-11-20 10:43", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "Ibrhimpatam", "pain": "Leg or nerve pain", "since": "A few weeks", "status": "Qualified", "plat": "Unknown", "resp": 0.4, "dup": false}, {"t": "2026-11-20 10:57", "day": "2026-11-20", "adset": "TG", "state": "AP", "area": "Rajahmundry", "pain": "Lower back", "since": "More than a year", "status": "Contacted", "plat": "Unknown", "resp": 0.1, "dup": false}, {"t": "2026-11-20 11:12", "day": "2026-11-20", "adset": "AP", "state": "TG", "area": "Kukatpally", "pain": "Knee", "since": "More than a year", "status": "Qualified", "plat": "Facebook", "resp": 0.4, "dup": false}, {"t": "2026-11-20 12:12", "day": "2026-11-20", "adset": "TG", "state": "AP", "area": "Kadapa", "pain": "Knee", "since": "More than a year", "status": "Attempted", "plat": "Unknown", "resp": 23.0, "dup": false}, {"t": "2026-11-20 12:39", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "Kodad", "pain": "Lower back", "since": "More than a year", "status": "Contacted", "plat": "Unknown", "resp": 22.6, "dup": false}, {"t": "2026-11-20 12:50", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "Malkajgiri", "pain": "Not given", "since": "Not given", "status": "Junk", "plat": "Instagram", "resp": 23.4, "dup": false}, {"t": "2026-11-20 12:55", "day": "2026-11-20", "adset": "AP", "state": "AP", "area": "Annavaram Police Station", "pain": "Lower back", "since": "A few months", "status": "Attempted", "plat": "Instagram", "resp": 23.3, "dup": false}, {"t": "2026-11-20 13:10", "day": "2026-11-20", "adset": "AP", "state": "AP", "area": "Srikakulam", "pain": "Knee", "since": "A few months", "status": "Qualified", "plat": "Unknown", "resp": 23.0, "dup": false}, {"t": "2026-11-20 13:20", "day": "2026-11-20", "adset": "AP", "state": "AP", "area": "Vizag", "pain": "Shoulder", "since": "A few months", "status": "Junk", "plat": "Unknown", "resp": 22.9, "dup": false}, {"t": "2026-11-20 13:21", "day": "2026-11-20", "adset": "AP", "state": "AP", "area": "Yerraguntla", "pain": "Lower back", "since": "More than a year", "status": "Contacted", "plat": "Unknown", "resp": 22.8, "dup": false}, {"t": "2026-11-20 13:38", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "Malkajgiri", "pain": "Knee", "since": "A few months", "status": "Attempted", "plat": "Facebook", "resp": 22.5, "dup": false}, {"t": "2026-11-20 14:33", "day": "2026-11-20", "adset": "AP", "state": "AP", "area": "Kakinada", "pain": "Neck", "since": "More than a year", "status": "Attempted", "plat": "Facebook", "resp": 21.5, "dup": false}, {"t": "2026-11-20 15:52", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "Warangal", "pain": "Knee", "since": "More than a year", "status": "Contacted", "plat": "Unknown", "resp": 20.1, "dup": false}, {"t": "2026-11-20 16:05", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "Kishan Bagh bahadurpura hyd", "pain": "Leg or nerve pain", "since": "A few months", "status": "Contacted", "plat": "Unknown", "resp": 19.9, "dup": false}, {"t": "2026-11-20 16:11", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "Kukatpally", "pain": "Knee", "since": "More than a year", "status": "Contacted", "plat": "Instagram", "resp": 19.7, "dup": false}, {"t": "2026-11-20 16:18", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "Kamareddy", "pain": "Knee", "since": "More than a year", "status": "Junk", "plat": "Unknown", "resp": 19.6, "dup": false}, {"t": "2026-11-20 18:12", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "Medchal", "pain": "Lower back", "since": "More than a year", "status": "Qualified", "plat": "Instagram", "resp": 17.7, "dup": false}, {"t": "2026-11-20 19:31", "day": "2026-11-20", "adset": "TG", "state": "AP", "area": "VALLAMPADU", "pain": "Knee", "since": "More than a year", "status": "Qualified", "plat": "Unknown", "resp": 16.1, "dup": false}, {"t": "2026-11-20 19:38", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "Maneguda", "pain": "Knee", "since": "A few weeks", "status": "Qualified", "plat": "Facebook", "resp": 16.1, "dup": false}, {"t": "2026-11-20 21:38", "day": "2026-11-20", "adset": "TG", "state": "AP", "area": "Vizag", "pain": "Knee", "since": "More than a year", "status": "Attempted", "plat": "Unknown", "resp": 14.0, "dup": false}, {"t": "2026-11-20 22:02", "day": "2026-11-20", "adset": "TG", "state": "TG", "area": "Wanaparthy", "pain": "Knee", "since": "More than a year", "status": "Attempted", "plat": "Unknown", "resp": 13.6, "dup": false}, {"t": "2026-11-20 22:08", "day": "2026-11-20", "adset": "AP", "state": "AP", "area": "Giddalur", "pain": "Lower back", "since": "More than a year", "status": "Contacted", "plat": "Facebook", "resp": 13.4, "dup": false}, {"t": "2026-11-21 00:57", "day": "2026-11-21", "adset": "TG", "state": "AP", "area": "Vijayawada", "pain": "Shoulder", "since": "More than a year", "status": "Junk", "plat": "Unknown", "resp": 10.6, "dup": false}, {"t": "2026-11-21 06:29", "day": "2026-11-21", "adset": "AP", "state": "TG", "area": "Mugachinttla", "pain": "Shoulder", "since": "More than a year", "status": "Junk", "plat": "Facebook", "resp": 5.1, "dup": true}, {"t": "2026-11-21 06:32", "day": "2026-11-21", "adset": "AP", "state": "TG", "area": "Mugachinttla", "pain": "Shoulder", "since": "More than a year", "status": "Attempted", "plat": "Facebook", "resp": 4.2, "dup": true}, {"t": "2026-11-21 10:56", "day": "2026-11-21", "adset": "TG", "state": "TG", "area": "Gajwel", "pain": "Knee", "since": "More than a year", "status": "Qualified", "plat": "Instagram", "resp": 0.4, "dup": false}, {"t": "2026-11-21 11:09", "day": "2026-11-21", "adset": "TG", "state": "TG", "area": "Secunderabad", "pain": "Knee", "since": "More than a year", "status": "Qualified", "plat": "Facebook", "resp": 0.1, "dup": false}, {"t": "2026-11-21 11:25", "day": "2026-11-21", "adset": "TG", "state": "TG", "area": "Narayankhed", "pain": "Lower back", "since": "Not given", "status": "Contacted", "plat": "Unknown", "resp": 0.0, "dup": false}, {"t": "2026-11-21 12:00", "day": "2026-11-21", "adset": "TG", "state": "TG", "area": "Gachibowli", "pain": "Lower back", "since": "A few weeks", "status": "Attempted", "plat": "Facebook", "resp": 0.1, "dup": false}, {"t": "2026-11-21 12:03", "day": "2026-11-21", "adset": "TG", "state": "AP", "area": "Ongole", "pain": "Knee", "since": "More than a year", "status": "Qualified", "plat": "Instagram", "resp": 0.1, "dup": true}, {"t": "2026-11-21 12:18", "day": "2026-11-21", "adset": "TG", "state": "TG", "area": "హైదరాబాద్ బాచుపల్లి", "pain": "Leg or nerve pain", "since": "A few months", "status": "Contacted", "plat": "Unknown", "resp": 0.0, "dup": false}, {"t": "2026-11-21 12:58", "day": "2026-11-21", "adset": "TG", "state": "TG", "area": "Adilabad", "pain": "Lower back", "since": "More than a year", "status": "Contacted", "plat": "Unknown", "resp": 3.6, "dup": false}, {"t": "2026-11-21 13:35", "day": "2026-11-21", "adset": "TG", "state": "TG", "area": "MANCHERIAL", "pain": "Leg or nerve pain", "since": "More than a year", "status": "Attempted", "plat": "Unknown", "resp": 3.0, "dup": false}, {"t": "2026-11-21 13:52", "day": "2026-11-21", "adset": "TG", "state": "TG", "area": "Hyderabad", "pain": "Lower back", "since": "More than a year", "status": "Contacted", "plat": "Instagram", "resp": 2.7, "dup": false}, {"t": "2026-11-21 14:50", "day": "2026-11-21", "adset": "TG", "state": "TG", "area": "మంచిర్యాల డిస్ట్రిక్ట్ చెన్నూర్", "pain": "Lower back", "since": "A few weeks", "status": "Contacted", "plat": "Facebook", "resp": 1.7, "dup": true}, {"t": "2026-11-21 14:52", "day": "2026-11-21", "adset": "TG", "state": "TG", "area": "మంచిర్యాల డిస్ట్రిక్ట్ చెన్నూర్", "pain": "Lower back", "since": "A few weeks", "status": "Contacted", "plat": "Facebook", "resp": 1.7, "dup": true}, {"t": "2026-11-21 14:57", "day": "2026-11-21", "adset": "TG", "state": "TG", "area": "Medchal", "pain": "Lower back", "since": "More than a year", "status": "Attempted", "plat": "Unknown", "resp": 1.6, "dup": false}, {"t": "2026-11-21 17:28", "day": "2026-11-21", "adset": "TG", "state": "TG", "area": "Kondapur", "pain": "Neck", "since": "More than a year", "status": "Attempted", "plat": "Instagram", "resp": 40.4, "dup": false}, {"t": "2026-11-21 19:53", "day": "2026-11-21", "adset": "TG", "state": "TG", "area": "Siddipet", "pain": "Knee", "since": "A few months", "status": "Attempted", "plat": "Unknown", "resp": 38.0, "dup": false}, {"t": "2026-11-21 22:41", "day": "2026-11-21", "adset": "TG", "state": "AP", "area": "Rjamehndravaram", "pain": "Shoulder", "since": "A few months", "status": "Attempted", "plat": "Instagram", "resp": 35.2, "dup": false}, {"t": "2026-11-21 23:31", "day": "2026-11-21", "adset": "TG", "state": "TG", "area": "Karimnagar", "pain": "Knee", "since": "More than a year", "status": "Contacted", "plat": "Unknown", "resp": 34.4, "dup": false}, {"t": "2026-11-21 23:32", "day": "2026-11-21", "adset": "TG", "state": "Unknown", "area": "Roshan Kahn", "pain": "Lower back", "since": "More than a year", "status": "Contacted", "plat": "Facebook", "resp": 34.3, "dup": false}, {"t": "2026-11-21 23:38", "day": "2026-11-21", "adset": "TG", "state": "TG", "area": "Mulaali", "pain": "Not given", "since": "Not given", "status": "Attempted", "plat": "Facebook", "resp": 34.3, "dup": true}, {"t": "2026-11-21 23:39", "day": "2026-11-21", "adset": "TG", "state": "TG", "area": "Hyderabad", "pain": "Not given", "since": "Not given", "status": "Attempted", "plat": "Facebook", "resp": 34.2, "dup": true}, {"t": "2026-11-21 23:45", "day": "2026-11-21", "adset": "TG", "state": "Unknown", "area": "223456", "pain": "Shoulder", "since": "Not given", "status": "Attempted", "plat": "Facebook", "resp": 34.1, "dup": true}, {"t": "2026-11-21 23:47", "day": "2026-11-21", "adset": "TG", "state": "Unknown", "area": "Ds22345", "pain": "Not given", "since": "Not given", "status": "Attempted", "plat": "Unknown", "resp": 34.1, "dup": true}, {"t": "2026-11-22 00:16", "day": "2026-11-22", "adset": "TG", "state": "TG", "area": "Hyderabad", "pain": "Knee", "since": "More than a year", "status": "Qualified", "plat": "Instagram", "resp": 33.9, "dup": false}, {"t": "2026-11-22 03:06", "day": "2026-11-22", "adset": "TG", "state": "TG", "area": "Bellampalli", "pain": "Neck", "since": "Less than a week", "status": "Attempted", "plat": "Facebook", "resp": 31.2, "dup": false}, {"t": "2026-11-22 06:21", "day": "2026-11-22", "adset": "TG", "state": "TG", "area": "Balnagar", "pain": "Knee", "since": "More than a year", "status": "Attempted", "plat": "Instagram", "resp": 27.9, "dup": false}, {"t": "2026-11-22 06:34", "day": "2026-11-22", "adset": "TG", "state": "AP", "area": "Rajamundry", "pain": "Somewhere else", "since": "More than a year", "status": "Contacted", "plat": "Facebook", "resp": 27.7, "dup": false}, {"t": "2026-11-22 06:45", "day": "2026-11-22", "adset": "TG", "state": "TG", "area": "Bejjanki siddipet", "pain": "Knee", "since": "A few months", "status": "Contacted", "plat": "Unknown", "resp": 27.6, "dup": false}, {"t": "2026-11-22 07:01", "day": "2026-11-22", "adset": "TG", "state": "TG", "area": "Miyapur", "pain": "Lower back", "since": "Not given", "status": "Attempted", "plat": "Facebook", "resp": 27.4, "dup": true}, {"t": "2026-11-22 07:01", "day": "2026-11-22", "adset": "TG", "state": "TG", "area": "Miyapur", "pain": "Shoulder", "since": "A few months", "status": "Attempted", "plat": "Facebook", "resp": 27.3, "dup": true}, {"t": "2026-11-22 07:07", "day": "2026-11-22", "adset": "TG", "state": "TG", "area": "Karimnagar", "pain": "Knee", "since": "More than a year", "status": "Attempted", "plat": "Unknown", "resp": 27.3, "dup": false}, {"t": "2026-11-22 07:07", "day": "2026-11-22", "adset": "TG", "state": "TG", "area": "Narsapur", "pain": "Shoulder", "since": "More than a year", "status": "Attempted", "plat": "Facebook", "resp": 27.4, "dup": false}, {"t": "2026-11-22 07:23", "day": "2026-11-22", "adset": "TG", "state": "AP", "area": "Bantumilli", "pain": "Shoulder", "since": "More than a year", "status": "Qualified", "plat": "Facebook", "resp": 27.1, "dup": false}, {"t": "2026-11-22 07:33", "day": "2026-11-22", "adset": "TG", "state": "TG", "area": "Khammam", "pain": "Knee", "since": "A few months", "status": "New", "plat": "Unknown", "resp": null, "dup": false}, {"t": "2026-11-22 09:12", "day": "2026-11-22", "adset": "TG", "state": "TG", "area": "Hyderabad", "pain": "Somewhere else", "since": "More than a year", "status": "New", "plat": "Facebook", "resp": null, "dup": false}, {"t": "2026-11-23 10:39", "day": "2026-11-23", "adset": "TG", "state": "TG", "area": "Battapur", "pain": "Knee", "since": "Not given", "status": "New", "plat": "Instagram", "resp": null, "dup": false}];
+const STAGES = [["New","--new"],["Attempted","--att"],["Contacted","--con"],["Qualified","--qua"],["Booked","--boo"],["Junk","--junk"],["Lost","--lost"]];
+const REACHED = new Set(["Contacted","Qualified","Booked","Converted"]);
+const NAME = {AP:"Andhra Pradesh",TG:"Telangana"};
+const basis = "state";
+
+const $ = id => document.getElementById(id);
+const fmt = n => n.toLocaleString("en-IN");
+const rs = n => "₹" + Math.round(n).toLocaleString("en-IN");
+const pct = (a,b) => b ? Math.round(100*a/b) + "%" : "–";
+const key = o => basis === "state" ? o.state : o.adset;
+const median = a => { if(!a.length) return null; const s=[...a].sort((x,y)=>x-y), m=s.length>>1; return s.length%2 ? s[m] : (s[m-1]+s[m])/2; };
+const count = (arr,f) => arr.reduce((m,o)=>(m[f(o)]=(m[f(o)]||0)+1,m),{});
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function stats(list){
+  const st = count(list,o=>o.status);
+  const reached = list.filter(o=>REACHED.has(o.status)).length;
+  const resp = list.map(o=>o.resp).filter(v=>v!=null);
+  return {n:list.length, st, reached, qual:(st.Qualified||0)+(st.Booked||0), junk:st.Junk||0, lost:st.Lost||0,
+          att:st.Attempted||0, fresh:st.New||0, resp:median(resp),
+          long:list.filter(o=>o.since==="More than a year").length};
+}
+
+function render(){
+  const ap = D.filter(o=>key(o)==="AP"), tg = D.filter(o=>key(o)==="TG");
+  const A = stats(ap), T = stats(tg), all = stats(D);
+  const uniq = D.length - D.filter(o=>o.dup).length + new Set(D.filter(o=>o.dup).map(o=>o.area+o.pain)).size;
+
+  $("kpis").innerHTML = [
+    [fmt(all.n),"enquiries, 1–23 Nov"],
+    [`<span style="color:var(--ap)">${A.n}</span>`, "live in Andhra Pradesh"],
+    [`<span style="color:var(--tg)">${T.n}</span>`, "live in Telangana"],
+    [fmt(all.reached), `reached on the phone (${pct(all.reached,all.n)})`],
+    [fmt(all.qual), `qualified (${pct(all.qual,all.n)})`],
+    [fmt(D.length-A.n-T.n), "outside AP/TG or area unclear"],
+  ].map(([b,s])=>`<div class="kpi"><b>${b}</b><span>${s}</span></div>`).join("");
+
+  // stage cards
+  $("stage-cards").innerHTML = [["AP",ap,A,"ap"],["TG",tg,T,"tg"]].map(([k,l,s,c])=>`
+    <div class="panel" style="display:grid;gap:12px">
+      <div class="state-head"><h3>${NAME[k]}</h3><span class="chip ${c}">${s.n} leads</span></div>
+      <div class="stack" role="img" aria-label="Stage split for ${NAME[k]}">${STAGES.map(([n,v])=>s.st[n]?`<div title="${n}: ${s.st[n]}" style="width:${100*s.st[n]/s.n}%;background:var(${v})"></div>`:"").join("")}</div>
+      <table>${STAGES.filter(([n])=>s.st[n]).map(([n,v])=>`<tr><td><span class="dot" style="background:var(${v})"></span> ${n}</td><td class="r">${s.st[n]}</td><td class="r muted">${pct(s.st[n],s.n)}</td></tr>`).join("")}</table>
+    </div>`).join("");
+  $("stage-legend").innerHTML = STAGES.map(([n,v])=>`<span><span class="dot" style="background:var(${v})"></span>${n}</span>`).join("");
+
+  // comparison
+  const row = (label,a,t,cls="") => `<tr><td>${label}</td><td class="r ${cls}">${a}</td><td class="r ${cls}">${t}</td></tr>`;
+  $("cmp").innerHTML = `<tr><th></th><th class="r" style="color:var(--ap)">Andhra Pradesh</th><th class="r" style="color:var(--tg)">Telangana</th></tr>`+
+    row("Enquiries",A.n,T.n)+
+    row("Reached on the phone",`${A.reached} · ${pct(A.reached,A.n)}`,`${T.reached} · ${pct(T.reached,T.n)}`)+
+    row("Qualified or booked",`${A.qual} · ${pct(A.qual,A.n)}`,`${T.qual} · ${pct(T.qual,T.n)}`)+
+    row("Still on “Attempted” (no answer yet)",`${A.att} · ${pct(A.att,A.n)}`,`${T.att} · ${pct(T.att,T.n)}`)+
+    row("Junk",`${A.junk} · ${pct(A.junk,A.n)}`,`${T.junk} · ${pct(T.junk,T.n)}`)+
+    row("Never called (New)",A.fresh,T.fresh)+
+    row("Pain for more than a year",pct(A.long,A.n),pct(T.long,T.n))+
+    row("Median time to first touch",A.resp!=null?A.resp.toFixed(1)+" h":"–",T.resp!=null?T.resp.toFixed(1)+" h":"–");
+
+  // daily chart
+  const days = [...new Set(D.map(o=>o.day))].sort();
+  const max = Math.max(...days.map(d=>D.filter(o=>o.day===d).length));
+  const W = Math.max(520, days.length*58), H=220, pad=28, bw=30, step=(W-pad*2)/days.length;
+  const y = v => H-pad - (H-pad*2)*v/max;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:${W}px;display:block" role="img" aria-label="Enquiries per day split by state">`;
+  for(let g=0; g<=max; g+=10){ svg += `<line x1="${pad}" x2="${W-pad/2}" y1="${y(g)}" y2="${y(g)}" stroke="var(--line)"/><text x="${pad-6}" y="${y(g)+4}" text-anchor="end">${g}</text>`; }
+  days.forEach((d,i)=>{
+    const x = pad + i*step + (step-bw)/2;
+    const a = D.filter(o=>o.day===d && key(o)==="AP").length, t = D.filter(o=>o.day===d && key(o)==="TG").length, r = D.filter(o=>o.day===d).length - a - t;
+    let base = 0;
+    [[t,"var(--tg)"],[a,"var(--ap)"],[r,"var(--new)"]].forEach(([v,c])=>{ if(!v) return; svg += `<rect x="${x}" y="${y(base+v)}" width="${bw}" height="${y(base)-y(base+v)}" fill="${c}"><title>${d}: ${v}</title></rect>`; base+=v; });
+    svg += `<text x="${x+bw/2}" y="${y(base)-5}" text-anchor="middle" style="fill:var(--fg);font-weight:600">${base}</text>`;
+    svg += `<text x="${x+bw/2}" y="${H-8}" text-anchor="middle">${d.slice(8)} Nov</text>`;
+  });
+  svg += `</svg>`;
+  $("daily").innerHTML = svg + `<div class="legend" style="margin-top:8px"><span><span class="dot" style="background:var(--tg)"></span>Telangana</span><span><span class="dot" style="background:var(--ap)"></span>Andhra Pradesh</span><span><span class="dot" style="background:var(--new)"></span>Other / unknown</span></div><p class="muted" style="font-size:13px;margin-top:6px">No leads came in from 3 to 17 Nov. The current campaign started on 18 Nov.</p>`;
+
+  // day-wise table
+  const DS = ["New","Attempted","Contacted","Qualified","Junk","Lost"];
+  const short = {New:"New",Attempted:"Att.",Contacted:"Cont.",Qualified:"Qual.",Junk:"Junk",Lost:"Lost"};
+  const z = v => v ? v : '<span class="muted">·</span>';
+  const grp = (l, c) => { const s = stats(l); return `<td class="r" style="font-weight:700;color:var(${c});border-left:2px solid var(--line)">${z(s.n)}</td>` + DS.map(n=>`<td class="r">${z(n==="Qualified"?s.qual:(s.st[n]||0))}</td>`).join("") + `<td class="r muted">${s.n?pct(s.reached,s.n):"–"}</td>`; };
+  const hdr = c => `<th class="r" style="border-left:2px solid var(--line);color:var(${c})">Leads</th>` + DS.map(n=>`<th class="r"><span class="dot" style="background:var(${stageColor(n)})"></span> ${short[n]}</th>`).join("") + `<th class="r">Reached</th>`;
+  const dayRow = (label, l, strong) => `<tr${strong?' style="font-weight:600;background:color-mix(in srgb,var(--line) 45%,transparent)"':''}><td style="white-space:nowrap">${label}</td>${grp(l.filter(o=>o.state==="AP"),"--ap")}${grp(l.filter(o=>o.state==="TG"),"--tg")}<td class="r" style="border-left:2px solid var(--line)">${z(l.filter(o=>o.state!=="AP"&&o.state!=="TG").length)}</td><td class="r" style="font-weight:700">${l.length}</td></tr>`;
+  const dname = d => new Date(d+"T00:00:00").toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"});
+  $("daywise").innerHTML = `<tr><th></th><th colspan="8" style="border-left:2px solid var(--line);color:var(--ap)">Andhra Pradesh</th><th colspan="8" style="border-left:2px solid var(--line);color:var(--tg)">Telangana</th><th style="border-left:2px solid var(--line)"></th><th></th></tr>` +
+    `<tr><th>Day</th>${hdr("--ap")}${hdr("--tg")}<th class="r" style="border-left:2px solid var(--line)">Other</th><th class="r">Total</th></tr>` +
+    days.map(d=>dayRow(dname(d), D.filter(o=>o.day===d))).join("") +
+    dayRow("Total, 1–23 Nov", D, true);
+
+  // bar lists
+  const barList = (list, f, color, top=8) => { const c = count(list,f); const e = Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,top); const m = e.length?e[0][1]:1;
+    return `<div class="bars">${e.map(([k,v])=>`<div class="bar-row"><span>${esc(k)}</span><div class="track"><div class="fill" style="width:${100*v/m}%;background:${color}"></div></div><span class="v">${v}</span></div>`).join("")}</div>`; };
+  const pair = (id,f,top) => $(id).innerHTML = [["AP",ap,"var(--ap)"],["TG",tg,"var(--tg)"]].map(([k,l,c])=>`<div class="panel" style="display:grid;gap:12px"><h3>${NAME[k]}</h3>${barList(l,f,c,top)}</div>`).join("");
+  pair("pain", o=>o.pain);
+  pair("since", o=>o.since);
+  const norm = a => a.replace(/\s+/g," ").trim().replace(/^rajamundry$|^rjamehndravaram$|^rajahmundry ap$/i,"Rajahmundry").replace(/^mugachintla$|^mugachinttla$/i,"Mugachintala").replace(/^(.)(.*)$/,(m,a,b)=>a.toUpperCase()+b.toLowerCase());
+  pair("areas", o=>norm(o.area||"Not given"), 10);
+
+  // findings
+  const cell = (ad,st) => D.filter(o=>o.adset===ad && o.state===st).length;
+  const F = [
+    ["act", `<b>${pct(A.n,A.n+T.n)} of AP + TG enquiries come from Andhra Pradesh (${A.n} vs ${T.n}).</b> ${cell("TG","AP")} of those AP patients came through the Telangana ad set, because it targets “home + recent” locations. Switch both ad sets to “home” only if you want each state’s budget to reach only that state.`],
+    ["act", `<b>${all.att} leads (${pct(all.att,all.n)}) are stuck on “Attempted”.</b> The team called and nobody picked up. That is the biggest leak in the funnel, bigger than junk. Do a second call and a WhatsApp follow-up on these before buying more leads.`],
+    [A.qual/A.n >= T.qual/T.n ? "good":"watch", `<b>Qualified rate: AP ${pct(A.qual,A.n)} vs TG ${pct(T.qual,T.n)}. Reached: AP ${pct(A.reached,A.n)} vs TG ${pct(T.reached,T.n)}.</b> AP patients have to travel to Hyderabad. Check how many qualified AP patients actually book before you move more budget towards AP.`],
+    ["watch", `<b>Only ${all.st.Booked||0} lead is marked Booked, and no lead is marked Converted.</b> One lead went to Booked and was then moved back to Qualified. If visits are happening, they aren’t being logged in the sheet, and without that Meta can’t learn from bookings.`],
+    ["watch", `<b>${D.filter(o=>o.dup).length} rows are repeat submissions from the same phone number.</b> The ${all.n} total counts people more than once. Count the unique people (about ${uniq}) when you report cost per patient.`],
+    ["good", `<b>Lower back and knee make up ${pct(D.filter(o=>o.pain==="Lower back"||o.pain==="Knee").length,all.n)} of all enquiries</b>, and ${pct(all.long,all.n)} of patients have had the pain for more than a year. That fits the chronic-pain message, so keep it.`],
+  ];
+  $("findings").innerHTML = F.map(([s,t])=>`<li><span class="sev ${s}">${s==="act"?"Act":s==="watch"?"Watch":"Good"}</span><p>${t}</p></li>`).join("");
+
+  renderRows();
+}
+
+const stageColor = s => (STAGES.find(x=>x[0]===s)||[0,"--new"])[1];
+function renderRows(){
+  const fs = $("f-state").value, fg = $("f-stage").value;
+  const list = D.filter(o=>{ const k=key(o); return (fs==="all" || (fs==="rest" ? (k!=="AP"&&k!=="TG") : k===fs)) && (fg==="all"||o.status===fg); }).slice().reverse();
+  const lab = {AP:"AP",TG:"TG",Old:"Old camp.",None:"–",Other:"Other",Unknown:"?"};
+  $("rows").innerHTML = `<tr><th>When</th><th>Lives in</th><th>Area</th><th>Pain</th><th>Since</th><th>Stage</th></tr>`+
+    list.map(o=>`<tr><td class="num" style="white-space:nowrap">${o.t.slice(8,10)} Nov ${o.t.slice(11)}</td><td>${lab[o.state]}</td><td>${esc(o.area||"–")}${o.dup?' <span class="flag">repeat</span>':""}</td><td>${esc(o.pain)}</td><td class="muted">${esc(o.since)}</td><td><span class="pill" style="background:var(${stageColor(o.status)})">${o.status}</span></td></tr>`).join("")+
+    `<tr><td colspan="6" class="muted">${list.length} rows</td></tr>`;
+}
+
+$("f-stage").innerHTML += STAGES.map(([n])=>`<option value="${n}">${n}</option>`).join("");
+$("f-state").addEventListener("change",renderRows);
+$("f-stage").addEventListener("change",renderRows);
+render();
+</script>
+
+</body>
+</html>
